@@ -1,15 +1,20 @@
 package uk.co.bensproule.photoorganiser.dao;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.io.File.separator;
+import static java.lang.Integer.MAX_VALUE;
 import static java.nio.file.Files.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.join;
 
 @Slf4j
 public class PhotoDao {
@@ -67,7 +72,15 @@ public class PhotoDao {
         }
 
         createDirectories(directory);
-        Path newPath = new File(outputDirectory + "/" + path.getFileName().toString()).toPath();
+        Path newPath = new File(outputDirectory + separator + path.getFileName().toString()).toPath();
+
+        if (Files.exists(newPath)) {
+            String pathName = path.getFileName().toString();
+            String[] pathNames = pathName.split("\\.");
+            pathNames[pathNames.length - 2] = pathNames[pathNames.length - 2] + RandomUtils.nextInt(0, MAX_VALUE);
+            newPath = new File(outputDirectory + separator + join(pathNames)).toPath();
+        }
+
         move(path, newPath);
     }
 }
