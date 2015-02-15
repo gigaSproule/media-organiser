@@ -1,23 +1,29 @@
 package uk.co.bensproule.photoorganiser.gui;
 
+import org.apache.commons.imaging.ImageReadException;
+import uk.co.bensproule.photoorganiser.service.PhotoService;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+
+import static javax.swing.JFileChooser.APPROVE_OPTION;
+import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = 1L;
-    private JLabel inputFileLabel;
-    private JLabel inputFilePathLabel;
-    private JLabel outputFileLabel;
-    private JLabel outputFilePathLabel;
-    private JFileChooser inputFileChooser;
+    private JLabel inputDirectoryLabel;
+    private JLabel inputDirectoryPathLabel;
+    private JLabel outputDirectoryLabel;
+    private JLabel outputDirectoryPathLabel;
+    private JFileChooser inputDirectoryChooser;
     private JFileChooser outputDirectoryChooser;
     private JButton organise;
 
     public MainFrame() {
-        super("JSON converter");
+        super("Photo Organiser");
         initUi();
     }
 
@@ -26,52 +32,49 @@ public class MainFrame extends JFrame {
         JPanel jPanel = new JPanel(gridLayout);
         this.getContentPane().add(jPanel);
 
-        inputFileLabel = new JLabel();
-        inputFileLabel.setText("Input File");
-        jPanel.add(inputFileLabel);
+        inputDirectoryLabel = new JLabel();
+        inputDirectoryLabel.setText("Input Directory");
+        jPanel.add(inputDirectoryLabel);
 
-        inputFilePathLabel = new JLabel();
-        jPanel.add(inputFilePathLabel);
+        inputDirectoryPathLabel = new JLabel();
+        jPanel.add(inputDirectoryPathLabel);
 
-        inputFileChooser = new JFileChooser();
+        inputDirectoryChooser = new JFileChooser();
+        inputDirectoryChooser.setFileSelectionMode(DIRECTORIES_ONLY);
 
-        JButton inputFileButton = new JButton("Input File");
-        inputFileButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int returnVal = inputFileChooser.showOpenDialog(MainFrame.this);
+        JButton inputFileButton = new JButton("Input Directory");
+        inputFileButton.addActionListener(e -> {
+            int returnVal = inputDirectoryChooser.showOpenDialog(MainFrame.this);
 
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = inputFileChooser.getSelectedFile();
-                    inputFilePathLabel.setText(file.getName());
-                } else {
-                    inputFilePathLabel.setText("");
-                }
+            if (returnVal == APPROVE_OPTION) {
+                File file = inputDirectoryChooser.getSelectedFile();
+                inputDirectoryPathLabel.setText(file.getName());
+            } else {
+                inputDirectoryPathLabel.setText("");
             }
         });
         jPanel.add(inputFileButton);
 
-        outputFileLabel = new JLabel();
-        outputFileLabel.setText("Output Directory");
-        jPanel.add(outputFileLabel);
+        outputDirectoryLabel = new JLabel();
+        outputDirectoryLabel.setText("Output Directory");
+        jPanel.add(outputDirectoryLabel);
 
-        outputFilePathLabel = new JLabel();
-        jPanel.add(outputFilePathLabel);
+        outputDirectoryPathLabel = new JLabel();
+        jPanel.add(outputDirectoryPathLabel);
 
         outputDirectoryChooser = new JFileChooser();
-        JButton outputDirectoryButton = new JButton("Output File");
-        outputDirectoryButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int returnVal = outputDirectoryChooser
-                        .showSaveDialog(MainFrame.this);
+        outputDirectoryChooser.setFileSelectionMode(DIRECTORIES_ONLY);
 
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = outputDirectoryChooser.getSelectedFile();
-                    outputFilePathLabel.setText(file.getName());
-                } else {
-                    outputFilePathLabel.setText("");
-                }
+        JButton outputDirectoryButton = new JButton("Output Directory");
+        outputDirectoryButton.addActionListener(e -> {
+            int returnVal = outputDirectoryChooser
+                    .showSaveDialog(MainFrame.this);
+
+            if (returnVal == APPROVE_OPTION) {
+                File file = outputDirectoryChooser.getSelectedFile();
+                outputDirectoryPathLabel.setText(file.getName());
+            } else {
+                outputDirectoryPathLabel.setText("");
             }
         });
         jPanel.add(outputDirectoryButton);
@@ -91,27 +94,29 @@ public class MainFrame extends JFrame {
         jPanel.add(new JLabel());
 
         organise = new JButton("Convert");
-        organise.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                File inputFile = inputFileChooser.getSelectedFile();
+        organise.addActionListener(e -> {
+            File inputDirectory = inputDirectoryChooser.getSelectedFile();
 
-                if (inputFile == null) {
-                    JOptionPane.showMessageDialog(null,
-                            "Please select the input file");
-                    return;
-                }
-
-                File outputFile = outputDirectoryChooser.getSelectedFile();
-
-                if (outputFile == null) {
-                    JOptionPane.showMessageDialog(null,
-                            "Please select an output file");
-                    return;
-                }
-
-                JOptionPane.showMessageDialog(null, "Organised");
+            if (inputDirectory == null) {
+                showMessageDialog(null, "Please select the input directory");
+                return;
             }
+
+            File outputDirectory = outputDirectoryChooser.getSelectedFile();
+
+            if (outputDirectory == null) {
+                showMessageDialog(null, "Please select an output directory");
+                return;
+            }
+
+            PhotoService photoService = new PhotoService();
+            try {
+                photoService.organise(inputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath());
+            } catch (IOException | ImageReadException ex) {
+                ex.printStackTrace();
+            }
+
+            showMessageDialog(null, "Organised");
         });
 
         jPanel.add(organise);
