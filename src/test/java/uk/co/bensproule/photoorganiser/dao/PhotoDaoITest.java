@@ -68,6 +68,27 @@ public class PhotoDaoITest {
     }
 
     @Test
+    public void testGetFilesDoesNotReturnPngFile() throws IOException {
+        createTempFile(tempPath, "test", ".png");
+        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(0));
+    }
+
+    @Test
+    public void testGetFilesDoesNotReturnGifFile() throws IOException {
+        createTempFile(tempPath, "test", ".gif");
+        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(0));
+    }
+
+    @Test
+    public void testGetFilesDoesNotReturnBmpFile() throws IOException {
+        createTempFile(tempPath, "test", ".bmp");
+        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(0));
+    }
+
+    @Test
     public void testGetFilesReturnsJpgFile() throws IOException {
         Path path = createTempFile(tempPath, "test", ".jpg");
 
@@ -86,35 +107,17 @@ public class PhotoDaoITest {
     }
 
     @Test
-    public void testGetFilesReturnsPngFile() throws IOException {
-        Path path = createTempFile(tempPath, "test", ".png");
-
-        List<Path> paths = photoDao.getFiles(tempPath.toString());
-        assertThat(paths.size(), is(1));
-        assertThat(paths.get(0), is(path));
-    }
-
-    @Test
-    public void testGetFilesReturnsGifFile() throws IOException {
-        Path path = createTempFile(tempPath, "test", ".gif");
-
-        List<Path> paths = photoDao.getFiles(tempPath.toString());
-        assertThat(paths.size(), is(1));
-        assertThat(paths.get(0), is(path));
-    }
-
-    @Test
-    public void testGetFilesReturnsBmpFile() throws IOException {
-        Path path = createTempFile(tempPath, "test", ".bmp");
-
-        List<Path> paths = photoDao.getFiles(tempPath.toString());
-        assertThat(paths.size(), is(1));
-        assertThat(paths.get(0), is(path));
-    }
-
-    @Test
     public void testGetFilesReturnsTifFile() throws IOException {
         Path path = createTempFile(tempPath, "test", ".tif");
+
+        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
+    }
+
+    @Test
+    public void testGetFilesReturnsTiffFile() throws IOException {
+        Path path = createTempFile(tempPath, "test", ".tiff");
 
         List<Path> paths = photoDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(1));
