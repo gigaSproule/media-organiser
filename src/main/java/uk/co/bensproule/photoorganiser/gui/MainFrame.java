@@ -93,7 +93,7 @@ public class MainFrame extends JFrame {
         jPanel.add(new JLabel());
         jPanel.add(new JLabel());
 
-        organise = new JButton("Convert");
+        organise = new JButton("Organise");
         organise.addActionListener(e -> {
             File inputDirectory = inputDirectoryChooser.getSelectedFile();
 
