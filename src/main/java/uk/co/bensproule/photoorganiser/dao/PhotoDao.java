@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.io.File.separator;
-import static java.lang.Integer.MAX_VALUE;
 import static java.nio.file.Files.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.join;
@@ -77,7 +76,7 @@ public class PhotoDao {
         if (Files.exists(newPath)) {
             String pathName = path.getFileName().toString();
             String[] pathNames = pathName.split("\\.");
-            pathNames[pathNames.length - 2] = pathNames[pathNames.length - 2] + RandomUtils.nextInt(0, MAX_VALUE);
+            pathNames[pathNames.length - 2] = pathNames[pathNames.length - 2] + RandomUtils.nextInt(0, 9);
             newPath = new File(outputDirectory + separator + join(pathNames)).toPath();
         }
 
