@@ -23,8 +23,6 @@ public class PhotoServiceTest {
     @Mock
     private PhotoDao photoDao;
     @Mock
-    private File file;
-    @Mock
     private Path path;
 
     @InjectMocks
@@ -33,32 +31,31 @@ public class PhotoServiceTest {
     @Before
     public void setup() {
         initMocks(this);
-        when(file.getName()).thenReturn("20150101_000000");
-        when(file.toPath()).thenReturn(path);
+        when(path.getFileName()).thenReturn(new File("20150101_000000").toPath());
     }
 
     @Test
     public void testOrganiseCallsGetFilesWithInputDirectory() throws IOException {
-        when(photoDao.getFiles(anyString())).thenReturn(asList(file));
+        when(photoDao.getFiles(anyString())).thenReturn(asList(path));
         photoService.organise("inputDirectory", "outputDirectory");
         verify(photoDao).getFiles("inputDirectory");
     }
 
     @Test
     public void testOrganiseGetsTheFileNameFromTheFile() throws IOException {
-        when(photoDao.getFiles(anyString())).thenReturn(asList(file));
+        when(photoDao.getFiles(anyString())).thenReturn(asList(path));
         photoService.organise("inputDirectory", "outputDirectory");
-        verify(file).getName();
+        verify(path).getFileName();
     }
 
     @Test
     public void testOrganisePassesTheOutputDirectoryPathWithTheZonedDateTimeIntoSaveFiles() throws IOException {
-        when(photoDao.getFiles(anyString())).thenReturn(asList(file));
+        when(photoDao.getFiles(anyString())).thenReturn(asList(path));
 
         photoService.organise("inputDirectory", "outputDirectory");
 
-        verify(file).getName();
-        verify(photoDao).saveFile("outputDirectory/2015/01/01", file.toPath());
+        verify(path).getFileName();
+        verify(photoDao).saveFile("outputDirectory/2015/01/01", path);
     }
 
     @Test
@@ -71,7 +68,7 @@ public class PhotoServiceTest {
 
     @Test
     public void testOrganiseCallsSaveFileWithOutputDirectory() throws IOException {
-        when(photoDao.getFiles(anyString())).thenReturn(asList(file));
+        when(photoDao.getFiles(anyString())).thenReturn(asList(path));
         photoService.organise("inputDirectory", "outputDirectory");
         verify(photoDao).saveFile(startsWith("outputDirectory"), eq(path));
     }

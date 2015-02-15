@@ -3,8 +3,8 @@ package uk.co.bensproule.photoorganiser.service;
 import lombok.extern.slf4j.Slf4j;
 import uk.co.bensproule.photoorganiser.dao.PhotoDao;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,18 +20,13 @@ public class PhotoService {
     }
 
     public void organise(String inputDirectory, String outputDirectory) throws IOException {
-        List<File> files = null;
-        try {
-            files = photoDao.getFiles(inputDirectory);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
+        List<Path> paths = photoDao.getFiles(inputDirectory);
 
-        for (File file : files) {
-            String fileName = file.getName();
+        for (Path path : paths) {
+            String fileName = path.getFileName().toString();
             ZonedDateTime zonedDateTime = ZonedDateTime.parse(fileName, formatter);
 
-            photoDao.saveFile(outputDirectory + "/" + zonedDateTime.getYear() + "/" + format(zonedDateTime.getMonthValue()) + "/" + format(zonedDateTime.getDayOfMonth()), file.toPath());
+            photoDao.saveFile(outputDirectory + "/" + zonedDateTime.getYear() + "/" + format(zonedDateTime.getMonthValue()) + "/" + format(zonedDateTime.getDayOfMonth()), path);
         }
     }
 

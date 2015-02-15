@@ -14,7 +14,9 @@ public class DeleteFileVisitor extends SimpleFileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
         try {
-            Files.delete(file);
+            if (file.startsWith("test")) {
+                Files.delete(file);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -24,7 +26,7 @@ public class DeleteFileVisitor extends SimpleFileVisitor<Path> {
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
         try {
-            if (!dir.toString().endsWith("dynamic")) {
+            if (dir.toString().endsWith("directory")) {
                 Files.delete(dir);
             }
         } catch (IOException e) {

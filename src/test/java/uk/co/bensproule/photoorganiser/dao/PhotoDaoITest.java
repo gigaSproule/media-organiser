@@ -7,25 +7,25 @@ import uk.co.bensproule.photoorganiser.test.DeleteFileVisitor;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import static java.io.File.separator;
+import static java.nio.file.Files.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class PhotoDaoITest {
-    public static final String DYNAMIC_RESOURCES_DIRECTORY = System.getProperty("user.dir") + "/src/test/resources/dynamic";
-    public static final String STATIC_RESOURCES_DIRECTORY = System.getProperty("user.dir") + "/src/test/resources/static";
+    private static final String RESOURCES_DIRECTORY = System.getProperty("user.dir") + separator +
+            "src" + separator + "test" + separator + "resources";
+    private Path tempPath;
     private PhotoDao photoDao;
 
     @Before
     public void setup() throws URISyntaxException, IOException {
+        tempPath = createTempDirectory("test");
         photoDao = new PhotoDao();
-        Path directory = new File(DYNAMIC_RESOURCES_DIRECTORY).toPath();
-
-        DeleteFileVisitor pf = new DeleteFileVisitor();
-        Files.walkFileTree(directory, pf);
+        walkFileTree(tempPath, new DeleteFileVisitor());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -50,203 +50,165 @@ public class PhotoDaoITest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsNotADirectory() throws IOException {
-        File file = new File(DYNAMIC_RESOURCES_DIRECTORY + "/file.jpg");
-        Files.createFile(file.toPath());
-
-        photoDao.getFiles(file.getAbsolutePath());
+        Path path = createTempFile(tempPath, "test", ".jpg");
+        photoDao.getFiles(path.toString());
     }
 
     @Test
     public void testGetFilesReturnsEmptyListIfNoFilesInDirectory() throws IOException {
-        List<File> files = photoDao.getFiles(DYNAMIC_RESOURCES_DIRECTORY);
-        assertThat(files.size(), is(0));
+        List<Path> paths = photoDao.getFiles(createTempDirectory("test").toString());
+        assertThat(paths.size(), is(0));
     }
 
     @Test
     public void testGetFilesDoesNotReturnNonImageFiles() throws IOException {
-        File file = new File(DYNAMIC_RESOURCES_DIRECTORY + "/file.txt");
-        Files.createFile(file.toPath());
-
-        List<File> files = photoDao.getFiles(DYNAMIC_RESOURCES_DIRECTORY);
-        assertThat(files.size(), is(0));
+        createTempFile(tempPath, "test", ".txt");
+        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(0));
     }
 
     @Test
     public void testGetFilesReturnsJpgFile() throws IOException {
-        File file = new File(DYNAMIC_RESOURCES_DIRECTORY + "/file.jpg");
-        Files.createFile(file.toPath());
+        Path path = createTempFile(tempPath, "test", ".jpg");
 
-        List<File> files = photoDao.getFiles(DYNAMIC_RESOURCES_DIRECTORY);
-        assertThat(files.size(), is(1));
-        assertThat(files.get(0), is(file));
+        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
     }
 
     @Test
     public void testGetFilesReturnsJpegFile() throws IOException {
-        File file = new File(DYNAMIC_RESOURCES_DIRECTORY + "/file.jpeg");
-        Files.createFile(file.toPath());
+        Path path = createTempFile(tempPath, "test", ".jpg");
 
-        List<File> files = photoDao.getFiles(DYNAMIC_RESOURCES_DIRECTORY);
-        assertThat(files.size(), is(1));
-        assertThat(files.get(0), is(file));
+        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
     }
 
     @Test
     public void testGetFilesReturnsPngFile() throws IOException {
-        File file = new File(DYNAMIC_RESOURCES_DIRECTORY + "/file.png");
-        Files.createFile(file.toPath());
+        Path path = createTempFile(tempPath, "test", ".png");
 
-        List<File> files = photoDao.getFiles(DYNAMIC_RESOURCES_DIRECTORY);
-        assertThat(files.size(), is(1));
-        assertThat(files.get(0), is(file));
+        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
     }
 
     @Test
     public void testGetFilesReturnsGifFile() throws IOException {
-        File file = new File(DYNAMIC_RESOURCES_DIRECTORY + "/file.gif");
-        Files.createFile(file.toPath());
+        Path path = createTempFile(tempPath, "test", ".gif");
 
-        List<File> files = photoDao.getFiles(DYNAMIC_RESOURCES_DIRECTORY);
-        assertThat(files.size(), is(1));
-        assertThat(files.get(0), is(file));
+        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
     }
 
     @Test
     public void testGetFilesReturnsBmpFile() throws IOException {
-        File file = new File(DYNAMIC_RESOURCES_DIRECTORY + "/file.bmp");
-        Files.createFile(file.toPath());
+        Path path = createTempFile(tempPath, "test", ".bmp");
 
-        List<File> files = photoDao.getFiles(DYNAMIC_RESOURCES_DIRECTORY);
-        assertThat(files.size(), is(1));
-        assertThat(files.get(0), is(file));
+        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
     }
 
     @Test
     public void testGetFilesReturnsTifFile() throws IOException {
-        File file = new File(DYNAMIC_RESOURCES_DIRECTORY + "/file.tif");
-        Files.createFile(file.toPath());
+        Path path = createTempFile(tempPath, "test", ".tif");
 
-        List<File> files = photoDao.getFiles(DYNAMIC_RESOURCES_DIRECTORY);
-        assertThat(files.size(), is(1));
-        assertThat(files.get(0), is(file));
+        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
     }
 
     @Test
     public void testGetFilesReturnsFilesWithinSubDirectories() throws IOException {
-        String directory = DYNAMIC_RESOURCES_DIRECTORY + "/directory";
-        Path createdDirectory = new File(directory).toPath();
-        Files.createDirectory(createdDirectory);
+        Path directory = createTempDirectory(tempPath, "test");
+        Path path = createTempFile(directory, "test", ".jpg");
 
-        File file = new File(directory + "/file.jpg");
-        Files.createFile(file.toPath());
-
-        List<File> files = photoDao.getFiles(DYNAMIC_RESOURCES_DIRECTORY);
-        assertThat(files.size(), is(1));
-        assertThat(files.get(0), is(file));
+        List<Path> paths = photoDao.getFiles(directory.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsNull() throws IOException {
-        Path path = new File(DYNAMIC_RESOURCES_DIRECTORY + "/file.jpg").toPath();
+        Path path = createTempFile(tempPath, "test", ".jpg");
         photoDao.saveFile(null, path);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsEmpty() throws IOException {
-        Path path = new File(DYNAMIC_RESOURCES_DIRECTORY + "/file.jpg").toPath();
+        Path path = createTempFile(tempPath, "test", ".jpg");
         photoDao.saveFile("", path);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsBlank() throws IOException {
-        Path path = new File(DYNAMIC_RESOURCES_DIRECTORY + "/file.jpg").toPath();
+        Path path = createTempFile(tempPath, "test", ".jpg");
         photoDao.saveFile(" ", path);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveFileThrowsIllegalArgumentExceptionIfFileIsNull() throws IOException {
-        photoDao.saveFile(DYNAMIC_RESOURCES_DIRECTORY, null);
+        photoDao.saveFile(createTempDirectory("test").toString(), null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsNotADirectory() throws IOException {
-        Path path = new File(DYNAMIC_RESOURCES_DIRECTORY + "/file.jpg").toPath();
-
-        Files.createFile(path);
-
+        Path path = createTempFile(tempPath, "test", ".jpg");
         photoDao.saveFile(path.toString(), path);
     }
 
     @Test
     public void testSaveFileCreatesFile() throws IOException {
-        Path staticPath = new File(STATIC_RESOURCES_DIRECTORY + "/image.jpg").toPath();
+        Path sourcePath = new File(createTempDirectory("test").toString() + separator + "image.jpg").toPath();
+        Path staticPath = new File(RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
+        copy(staticPath, sourcePath);
 
-        String sourceDirectory = DYNAMIC_RESOURCES_DIRECTORY + "/source/";
-        Files.createDirectory(new File(sourceDirectory).toPath());
-        Path sourcePath = new File(sourceDirectory + "image.jpg").toPath();
-        Files.copy(staticPath, sourcePath);
+        Path destinationPath = createTempDirectory("test");
 
-        String destinationDirectory = DYNAMIC_RESOURCES_DIRECTORY + "/destination";
-        Files.createDirectory(new File(destinationDirectory).toPath());
-        Path destinationPath = new File(destinationDirectory + "/image.jpg").toPath();
+        photoDao.saveFile(destinationPath.toString(), sourcePath);
 
-        photoDao.saveFile(destinationDirectory, sourcePath);
-
-        assertThat(Files.exists(destinationPath), is(true));
+        assertThat(exists(destinationPath), is(true));
     }
 
     @Test
     public void testSaveFileCreatesDirectoriesIfTheyDoNotExist() throws IOException {
-        Path staticPath = new File(STATIC_RESOURCES_DIRECTORY + "/image.jpg").toPath();
+        Path staticPath = new File(RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
+        Path sourcePath = new File(createTempDirectory("test").toString() + separator + "image.jpg").toPath();
+        copy(staticPath, sourcePath);
 
-        String sourceDirectory = DYNAMIC_RESOURCES_DIRECTORY + "/source/";
-        Files.createDirectory(new File(sourceDirectory).toPath());
-        Path sourcePath = new File(sourceDirectory + "image.jpg").toPath();
-        Files.copy(staticPath, sourcePath);
+        Path destinationPath = createTempDirectory("test");
 
-        String destinationDirectory = DYNAMIC_RESOURCES_DIRECTORY + "/destination";
-        Files.createDirectory(new File(destinationDirectory).toPath());
-        String outputDirectory = destinationDirectory + "/directory";
-        Path destinationPath = new File(outputDirectory + "/image.jpg").toPath();
-
-        photoDao.saveFile(outputDirectory, sourcePath);
-
-        assertThat(Files.exists(destinationPath), is(true));
+        photoDao.saveFile(destinationPath.toString() + separator + "directory", sourcePath);
+        assertThat(exists(new File(destinationPath.toString() + separator + "directory").toPath()), is(true));
     }
 
     @Test
     public void testSaveFileDeletesOldFile() throws IOException {
-        Path staticPath = new File(STATIC_RESOURCES_DIRECTORY + "/image.jpg").toPath();
+        Path staticPath = new File(RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
+        Path sourcePath = new File(createTempDirectory("test").toString() + separator + "image.jpg").toPath();
+        copy(staticPath, sourcePath);
 
-        String sourceDirectory = DYNAMIC_RESOURCES_DIRECTORY + "/source/";
-        Files.createDirectory(new File(sourceDirectory).toPath());
-        Path sourcePath = new File(sourceDirectory + "/image.jpg").toPath();
-        Files.copy(staticPath, sourcePath);
+        Path destinationPath = createTempDirectory("test");
 
-        String destinationDirectory = DYNAMIC_RESOURCES_DIRECTORY + "/destination";
-        Files.createDirectory(new File(destinationDirectory).toPath());
+        photoDao.saveFile(destinationPath.toString(), sourcePath);
 
-        photoDao.saveFile(destinationDirectory, sourcePath);
-
-        assertThat(Files.notExists(sourcePath), is(true));
+        assertThat(notExists(sourcePath), is(true));
     }
 
     @Test
     public void testSaveFileCreatesNewFileWithTheSameDataAsTheOldFile() throws IOException {
-        Path staticPath = new File(STATIC_RESOURCES_DIRECTORY + "/image.jpg").toPath();
+        Path staticPath = new File(RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
+        Path sourcePath = new File(createTempDirectory("test").toString() + separator + "image.jpg").toPath();
+        copy(staticPath, sourcePath);
 
-        String sourceDirectory = DYNAMIC_RESOURCES_DIRECTORY + "/source/";
-        Files.createDirectory(new File(sourceDirectory).toPath());
-        Path sourcePath = new File(sourceDirectory + "/image.jpg").toPath();
-        Files.copy(staticPath, sourcePath);
+        Path destinationPath = createTempDirectory("test");
 
-        String destinationDirectory = DYNAMIC_RESOURCES_DIRECTORY + "/destination";
-        Files.createDirectory(new File(destinationDirectory).toPath());
-        Path destinationPath = new File(destinationDirectory + "/image.jpg").toPath();
+        photoDao.saveFile(destinationPath.toString(), sourcePath);
 
-        photoDao.saveFile(destinationDirectory, sourcePath);
-
-        assertThat(Files.getAttribute(destinationPath, "size"), is(Files.getAttribute(staticPath, "size")));
+        assertThat(getAttribute(new File(destinationPath.toString() + separator + "image.jpg").toPath(), "size"), is(getAttribute(staticPath, "size")));
     }
 
 }

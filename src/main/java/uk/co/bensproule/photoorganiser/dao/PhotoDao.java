@@ -4,50 +4,47 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.nio.file.Files.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 public class PhotoDao {
-    public List<File> getFiles(String inputDirectory) throws IOException {
+    public List<Path> getFiles(String inputDirectory) throws IOException {
         if (isBlank(inputDirectory)) {
             throw new IllegalArgumentException("An input directory should be provided");
         }
 
-        File directory = new File(inputDirectory);
-        if (Files.notExists(directory.toPath())) {
+        Path directory = new File(inputDirectory).toPath();
+        if (notExists(directory)) {
             throw new IllegalArgumentException("The input directory does not exist");
         }
 
-        if (!Files.isDirectory(directory.toPath())) {
+        if (!isDirectory(directory)) {
             throw new IllegalArgumentException("The input directory is not a directory");
         }
 
-        List<File> images = new ArrayList<>();
+        List<Path> images = new ArrayList<>();
         getFiles(directory, images);
 
         return images;
     }
 
-    private void getFiles(File directory, List<File> images) throws IOException {
-        File[] files = directory.listFiles();
-        // TODO: Figure out how to test this
-        if (files == null) {
-            throw new IllegalArgumentException("Failed to get the list of files");
-        }
-
-        for (File file : files) {
-            if (Files.isDirectory(file.toPath())) {
-                getFiles(file, images);
+    private void getFiles(Path directory, List<Path> images) throws IOException {
+        List<Path> paths = new ArrayList<>();
+        list(directory).forEach(paths::add);
+        for (Path path : paths) {
+            if (isDirectory(path)) {
+                getFiles(path, images);
                 continue;
             }
 
-            if (Files.probeContentType(file.toPath()).startsWith("image/")) {
-                images.add(file);
+            String contentType = probeContentType(path);
+            if (contentType != null && contentType.startsWith("image/")) {
+                images.add(path);
             }
         }
     }
@@ -62,25 +59,12 @@ public class PhotoDao {
         }
 
         Path directory = new File(outputDirectory).toPath();
-        if (Files.isRegularFile(directory)) {
+        if (isRegularFile(directory)) {
             throw new IllegalArgumentException("The output directory is a file");
         }
 
         createDirectories(directory);
-        Path newFile = new File(outputDirectory + "/" + path.getFileName().toString()).toPath();
-        Files.move(path, newFile);
-    }
-
-    private void createDirectories(Path path) throws IOException {
-        if (Files.exists(path)) {
-            return;
-        }
-
-        Path parentPath = path.getParent();
-        if (Files.notExists(parentPath)) {
-            createDirectories(parentPath);
-        }
-
-        Files.createDirectory(path);
+        Path newPath = new File(outputDirectory + "/" + path.getFileName().toString()).toPath();
+        move(path, newPath);
     }
 }
