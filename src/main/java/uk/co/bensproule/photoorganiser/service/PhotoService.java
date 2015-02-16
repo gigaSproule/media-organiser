@@ -16,6 +16,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static java.time.format.TextStyle.FULL;
+import static java.util.Locale.ENGLISH;
 import static org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL;
 import static org.apache.commons.lang3.Validate.notNull;
 
@@ -45,8 +47,16 @@ public class PhotoService {
 
             notNull(zonedDateTime, "Could not get the ZonedDateTime from the file");
 
-            photoDao.saveFile(outputDirectory + "/" + zonedDateTime.getYear() + "/" + format(zonedDateTime.getMonthValue()) + "/" + format(zonedDateTime.getDayOfMonth()), path);
+            photoDao.saveFile(outputDirectory + "/" + zonedDateTime.getYear() + "/" + getMonth(zonedDateTime) + "/" + getDay(zonedDateTime), path);
         }
+    }
+
+    private String getDay(ZonedDateTime zonedDateTime) {
+        return format(zonedDateTime.getDayOfMonth());
+    }
+
+    private String getMonth(ZonedDateTime zonedDateTime) {
+        return format(zonedDateTime.getMonthValue()) + " - " + zonedDateTime.getMonth().getDisplayName(FULL, ENGLISH);
     }
 
     private String format(int value) {
