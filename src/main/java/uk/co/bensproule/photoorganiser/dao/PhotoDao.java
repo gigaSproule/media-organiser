@@ -73,18 +73,22 @@ public class PhotoDao {
         Path newPath = new File(outputDirectory + separator + path.getFileName().toString()).toPath();
 
         if (Files.exists(newPath)) {
-            String pathName = path.getFileName().toString();
-            String[] pathNames = pathName.split("\\.");
             int i = 0;
-            pathNames[pathNames.length - 2] = pathNames[pathNames.length - 2] + i;
-            newPath = new File(outputDirectory + separator + join(pathNames, ".")).toPath();
-            while (exists(newPath)) {
+            do {
+                newPath = incrementFilenameIndex(outputDirectory, path, i);
                 i++;
-                pathNames[pathNames.length - 2] = pathNames[pathNames.length - 2] + i;
-                newPath = new File(outputDirectory + separator + join(pathNames, ".")).toPath();
-            }
+            } while (exists(newPath));
         }
 
         move(path, newPath);
+    }
+
+    private Path incrementFilenameIndex(String outputDirectory, Path path, int index) {
+        Path newPath;
+        String pathName = path.getFileName().toString();
+        String[] pathNames = pathName.split("\\.");
+        pathNames[pathNames.length - 2] = pathNames[pathNames.length - 2] + index;
+        newPath = new File(outputDirectory + separator + join(pathNames, ".")).toPath();
+        return newPath;
     }
 }

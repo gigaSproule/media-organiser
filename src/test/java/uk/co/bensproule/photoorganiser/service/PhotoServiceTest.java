@@ -81,7 +81,7 @@ public class PhotoServiceTest {
     public void testOrganiseGetsTheMetadataFromTheFileIsJpegFormat() throws IOException, ImageReadException {
         when(photoDao.getFiles(anyString())).thenReturn(asList(path));
         photoService.organise("inputDirectory", "outputDirectory");
-        verify(photoDao).saveFile("outputDirectory/2015/01/01", path);
+        verify(photoDao).saveFile("outputDirectory/2015/01 - January/01", path);
         verifyStatic();
         Imaging.getMetadata(path.toFile());
     }
@@ -104,7 +104,7 @@ public class PhotoServiceTest {
 
         photoService.organise("inputDirectory", "outputDirectory");
 
-        verify(photoDao).saveFile("outputDirectory/2015/01/01", path);
+        verify(photoDao).saveFile("outputDirectory/2015/01 - January/01", path);
     }
 
     @Test
