@@ -7,12 +7,15 @@ import uk.co.bensproule.photoorganiser.test.DeleteFileVisitor;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.io.File.separator;
 import static java.nio.file.Files.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 public class PhotoDaoITest {
@@ -223,11 +226,40 @@ public class PhotoDaoITest {
         Path destinationPath = createTempDirectory(DESTINATION_PATH);
 
         copy(staticPath, sourcePath);
-        copy(staticPath, new File(destinationPath.toString() + separator + "image.jpg").toPath());
+        Path preCreatedFile = new File(destinationPath.toString() + separator + "image.jpg").toPath();
+        copy(staticPath, preCreatedFile);
 
         photoDao.saveFile(destinationPath.toString(), sourcePath);
 
-        assertThat(exists(destinationPath), is(true));
+        List<Path> createdFiles = new ArrayList<>();
+        Files.list(destinationPath).forEach(createdFiles::add);
+
+        assertThat(createdFiles, hasSize(2));
+        assertThat(createdFiles.get(0), is(preCreatedFile));
+        assertThat(createdFiles.get(1), is(new File(destinationPath.toString() + separator + "image0.jpg").toPath()));
+    }
+
+    @Test
+    public void testSaveFileIncrementsRenamedFileIndexIfFileInOutputAlreadyHasThatName() throws IOException {
+        Path sourcePath = new File(createTempDirectory(SOURCE_PATH).toString() + separator + "image.jpg").toPath();
+        Path staticPath = new File(RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
+        Path destinationPath = createTempDirectory(DESTINATION_PATH);
+
+        copy(staticPath, sourcePath);
+        Path preCreatedFile = new File(destinationPath.toString() + separator + "image.jpg").toPath();
+        copy(staticPath, preCreatedFile);
+        Path preCreatedFileIncremented = new File(destinationPath.toString() + separator + "image0.jpg").toPath();
+        copy(staticPath, preCreatedFileIncremented);
+
+        photoDao.saveFile(destinationPath.toString(), sourcePath);
+
+        List<Path> createdFiles = new ArrayList<>();
+        Files.list(destinationPath).forEach(createdFiles::add);
+
+        assertThat(createdFiles, hasSize(3));
+        assertThat(createdFiles.get(0), is(preCreatedFile));
+        assertThat(createdFiles.get(1), is(preCreatedFileIncremented));
+        assertThat(createdFiles.get(2), is(new File(destinationPath.toString() + separator + "image1.jpg").toPath()));
     }
 
 }
