@@ -28,7 +28,7 @@ public class MainFrame extends JFrame {
     }
 
     private void initUi() {
-        GridLayout gridLayout = new GridLayout(5, 3);
+        GridLayout gridLayout = new GridLayout(4, 3);
         JPanel jPanel = new JPanel(gridLayout);
         this.getContentPane().add(jPanel);
 
@@ -43,17 +43,18 @@ public class MainFrame extends JFrame {
         inputDirectoryChooser.setFileSelectionMode(DIRECTORIES_ONLY);
 
         JButton inputFileButton = new JButton("Input Directory");
+        jPanel.add(inputFileButton);
+
         inputFileButton.addActionListener(e -> {
             int returnVal = inputDirectoryChooser.showOpenDialog(MainFrame.this);
 
             if (returnVal == APPROVE_OPTION) {
                 File file = inputDirectoryChooser.getSelectedFile();
-                inputDirectoryPathLabel.setText(file.getName());
+                inputDirectoryPathLabel.setText(file.getAbsolutePath());
             } else {
                 inputDirectoryPathLabel.setText("");
             }
         });
-        jPanel.add(inputFileButton);
 
         outputDirectoryLabel = new JLabel();
         outputDirectoryLabel.setText("Output Directory");
@@ -66,34 +67,43 @@ public class MainFrame extends JFrame {
         outputDirectoryChooser.setFileSelectionMode(DIRECTORIES_ONLY);
 
         JButton outputDirectoryButton = new JButton("Output Directory");
+        jPanel.add(outputDirectoryButton);
+
         outputDirectoryButton.addActionListener(e -> {
             int returnVal = outputDirectoryChooser
                     .showSaveDialog(MainFrame.this);
 
             if (returnVal == APPROVE_OPTION) {
                 File file = outputDirectoryChooser.getSelectedFile();
-                outputDirectoryPathLabel.setText(file.getName());
+                outputDirectoryPathLabel.setText(file.getAbsolutePath());
             } else {
                 outputDirectoryPathLabel.setText("");
             }
         });
-        jPanel.add(outputDirectoryButton);
 
-        jPanel.add(new JLabel("From"));
+        jPanel.add(new JLabel("Formatting"));
         jPanel.add(new JLabel());
-        JPanel fromJPanel = new JPanel(new GridLayout());
-        jPanel.add(fromJPanel);
+        JPanel formatPanel = new JPanel(new GridLayout(3, 1));
+        jPanel.add(formatPanel);
 
-        jPanel.add(new JLabel("To"));
+        ButtonGroup buttonGroup = new ButtonGroup();
+        JRadioButton numberFormat = new JRadioButton("YYYY/MM/DD");
+        JRadioButton textFormat = new JRadioButton("YYYY/MMMMM/DD");
+        JRadioButton numberTextFormat = new JRadioButton("YYYY/MM - MMMMM/DD");
+
+        buttonGroup.add(numberFormat);
+        buttonGroup.add(textFormat);
+        buttonGroup.add(numberTextFormat);
+
+        formatPanel.add(numberFormat);
+        formatPanel.add(textFormat);
+        formatPanel.add(numberTextFormat);
+
         jPanel.add(new JLabel());
-
-        JPanel toJPanel = new JPanel(new GridLayout());
-        jPanel.add(toJPanel);
-
         jPanel.add(new JLabel());
-        jPanel.add(new JLabel());
-
         organise = new JButton("Organise");
+        jPanel.add(organise);
+
         organise.addActionListener(e -> {
             File inputDirectory = inputDirectoryChooser.getSelectedFile();
 
@@ -118,8 +128,6 @@ public class MainFrame extends JFrame {
 
             showMessageDialog(null, "Organised");
         });
-
-        jPanel.add(organise);
 
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
