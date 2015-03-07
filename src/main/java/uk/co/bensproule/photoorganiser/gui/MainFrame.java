@@ -14,13 +14,11 @@ import static javax.swing.JOptionPane.showMessageDialog;
 
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = 1L;
-    private JLabel inputDirectoryLabel;
     private JLabel inputDirectoryPathLabel;
-    private JLabel outputDirectoryLabel;
     private JLabel outputDirectoryPathLabel;
     private JFileChooser inputDirectoryChooser;
     private JFileChooser outputDirectoryChooser;
-    private JButton organise;
+    private ButtonGroup buttonGroup;
 
     public MainFrame() {
         super("Photo Organiser");
@@ -28,11 +26,11 @@ public class MainFrame extends JFrame {
     }
 
     private void initUi() {
-        GridLayout gridLayout = new GridLayout(4, 3);
+        GridLayout gridLayout = new GridLayout(6, 3);
         JPanel jPanel = new JPanel(gridLayout);
         this.getContentPane().add(jPanel);
 
-        inputDirectoryLabel = new JLabel();
+        JLabel inputDirectoryLabel = new JLabel();
         inputDirectoryLabel.setText("Input Directory");
         jPanel.add(inputDirectoryLabel);
 
@@ -56,7 +54,7 @@ public class MainFrame extends JFrame {
             }
         });
 
-        outputDirectoryLabel = new JLabel();
+        JLabel outputDirectoryLabel = new JLabel();
         outputDirectoryLabel.setText("Output Directory");
         jPanel.add(outputDirectoryLabel);
 
@@ -81,27 +79,34 @@ public class MainFrame extends JFrame {
             }
         });
 
-        jPanel.add(new JLabel("Formatting"));
-        jPanel.add(new JLabel());
-        JPanel formatPanel = new JPanel(new GridLayout(3, 1));
-        jPanel.add(formatPanel);
-
-        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup = new ButtonGroup();
         JRadioButton numberFormat = new JRadioButton("YYYY/MM/DD");
+        numberFormat.setActionCommand("YYYY/MM/DD");
+        numberFormat.setSelected(true);
         JRadioButton textFormat = new JRadioButton("YYYY/MMMMM/DD");
+        textFormat.setActionCommand("YYYY/MMMM/DD");
         JRadioButton numberTextFormat = new JRadioButton("YYYY/MM - MMMMM/DD");
+        numberTextFormat.setActionCommand("YYYY/MM - MMMM/DD");
 
         buttonGroup.add(numberFormat);
         buttonGroup.add(textFormat);
         buttonGroup.add(numberTextFormat);
 
-        formatPanel.add(numberFormat);
-        formatPanel.add(textFormat);
-        formatPanel.add(numberTextFormat);
+        jPanel.add(new JLabel());
+        jPanel.add(new JLabel());
+        jPanel.add(numberFormat);
+
+        jPanel.add(new JLabel("Formatting"));
+        jPanel.add(new JLabel());
+        jPanel.add(textFormat);
 
         jPanel.add(new JLabel());
         jPanel.add(new JLabel());
-        organise = new JButton("Organise");
+        jPanel.add(numberTextFormat);
+
+        jPanel.add(new JLabel());
+        jPanel.add(new JLabel());
+        JButton organise = new JButton("Organise");
         jPanel.add(organise);
 
         organise.addActionListener(e -> {
@@ -121,7 +126,7 @@ public class MainFrame extends JFrame {
 
             PhotoService photoService = new PhotoService();
             try {
-                photoService.organise(inputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath());
+                photoService.organise(inputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath(), buttonGroup.getSelection().getActionCommand());
             } catch (IOException | ImageReadException ex) {
                 ex.printStackTrace();
             }

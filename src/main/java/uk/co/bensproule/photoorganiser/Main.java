@@ -7,23 +7,21 @@ import org.apache.commons.cli.Options;
 import uk.co.bensproule.photoorganiser.gui.MainFrame;
 import uk.co.bensproule.photoorganiser.service.PhotoService;
 
-import javax.swing.*;
-
+import static javax.swing.SwingUtilities.invokeLater;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class Main {
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    MainFrame mainFrame = new MainFrame();
-                    mainFrame.setVisible(true);
-                }
+            invokeLater(() -> {
+                MainFrame mainFrame = new MainFrame();
+                mainFrame.setVisible(true);
             });
         } else {
             Options options = new Options();
             options.addOption("id", "inputdirectory", true, "The directory that contains the photos to organise");
             options.addOption("od", "outputdirectory", true, "The directory to put the organised photos");
+            options.addOption("of", "outputformat", true, "The format the output directory should use to put the organised photos");
             CommandLineParser parser = new GnuParser();
             CommandLine cmd = parser.parse(options, args);
             String inputDirectory = cmd.getOptionValue("inputdirectory");
@@ -38,7 +36,7 @@ public class Main {
             }
 
             PhotoService photoService = new PhotoService();
-            photoService.organise(inputDirectory, outputDirectory);
+            photoService.organise(inputDirectory, outputDirectory, cmd.getOptionValue("outputformat"));
         }
     }
 }

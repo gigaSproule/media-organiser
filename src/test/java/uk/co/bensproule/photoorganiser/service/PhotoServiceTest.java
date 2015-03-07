@@ -65,7 +65,7 @@ public class PhotoServiceTest {
     @Test
     public void testOrganiseCallsGetFilesWithInputDirectory() throws IOException, ImageReadException {
         when(photoDao.getFiles(anyString())).thenReturn(asList(path));
-        photoService.organise("inputDirectory", "outputDirectory");
+        photoService.organise("inputDirectory", "outputDirectory", "YYYY/MM/DD");
         verify(photoDao).getFiles("inputDirectory");
     }
 
@@ -73,14 +73,14 @@ public class PhotoServiceTest {
     public void testOrganiseGetsTheMetadataFromTheFileIsNotExifFormat() throws IOException, ImageReadException {
         when(photoDao.getFiles(anyString())).thenReturn(asList(path));
         when(Imaging.getMetadata(any(File.class))).thenReturn(imageMetadata);
-        photoService.organise("inputDirectory", "outputDirectory");
+        photoService.organise("inputDirectory", "outputDirectory", "YYYY/MM/DD");
     }
 
     @Test
     public void testOrganiseGetsTheMetadataFromTheFileIsJpegFormat() throws IOException, ImageReadException {
         when(photoDao.getFiles(anyString())).thenReturn(asList(path));
-        photoService.organise("inputDirectory", "outputDirectory");
-        verify(photoDao).saveFile("outputDirectory/2015/01 - January/01", path);
+        photoService.organise("inputDirectory", "outputDirectory", "YYYY/MM/DD");
+        verify(photoDao).saveFile("outputDirectory/2015/01/01", path);
         verifyStatic();
         Imaging.getMetadata(path.toFile());
     }
@@ -91,7 +91,7 @@ public class PhotoServiceTest {
     public void testOrganiseGetsTheMetadataFromTheFileIsTiffFormat() throws IOException, ImageReadException {
         when(photoDao.getFiles(anyString())).thenReturn(asList(path));
         when(Imaging.getMetadata(any(File.class))).thenReturn(tiffImageMetadata);
-        photoService.organise("inputDirectory", "outputDirectory");
+        photoService.organise("inputDirectory", "outputDirectory", "YYYY/MM/DD");
         verify(photoDao).saveFile("outputDirectory/2015/01/01", path);
         verifyStatic();
         Imaging.getMetadata(path.toFile());
@@ -101,15 +101,15 @@ public class PhotoServiceTest {
     public void testOrganisePassesTheOutputDirectoryPathWithTheZonedDateTimeIntoSaveFiles() throws IOException, ImageReadException {
         when(photoDao.getFiles(anyString())).thenReturn(asList(path));
 
-        photoService.organise("inputDirectory", "outputDirectory");
+        photoService.organise("inputDirectory", "outputDirectory", "YYYY/MM/DD");
 
-        verify(photoDao).saveFile("outputDirectory/2015/01 - January/01", path);
+        verify(photoDao).saveFile("outputDirectory/2015/01/01", path);
     }
 
     @Test
     public void testOrganiseDoesNotCallSaveFileIfNoFilesReturned() throws IOException, ImageReadException {
         when(photoDao.getFiles(anyString())).thenReturn(new ArrayList<>());
-        photoService.organise("inputDirectory", "outputDirectory");
+        photoService.organise("inputDirectory", "outputDirectory", "YYYY/MM/DD");
         verify(photoDao).getFiles("inputDirectory");
         verify(photoDao, never()).saveFile(anyString(), any(Path.class));
     }
@@ -117,15 +117,36 @@ public class PhotoServiceTest {
     @Test
     public void testOrganiseCallsSaveFileWithOutputDirectory() throws IOException, ImageReadException {
         when(photoDao.getFiles(anyString())).thenReturn(asList(path));
-        photoService.organise("inputDirectory", "outputDirectory");
+        photoService.organise("inputDirectory", "outputDirectory", "YYYY/MM/DD");
         verify(photoDao).saveFile(startsWith("outputDirectory"), eq(path));
+    }
+
+    @Test
+    public void testOrganiseCallsSaveFileWithCorrectOutputFormatYYYYMMDD() throws IOException, ImageReadException {
+        when(photoDao.getFiles(anyString())).thenReturn(asList(path));
+        photoService.organise("inputDirectory", "outputDirectory", "YYYY/MM/DD");
+        verify(photoDao).saveFile("outputDirectory/2015/01/01", path);
+    }
+
+    @Test
+    public void testOrganiseCallsSaveFileWithCorrectOutputFormatYYYYMMMMDD() throws IOException, ImageReadException {
+        when(photoDao.getFiles(anyString())).thenReturn(asList(path));
+        photoService.organise("inputDirectory", "outputDirectory", "YYYY/MMMM/DD");
+        verify(photoDao).saveFile("outputDirectory/2015/January/01", path);
+    }
+
+    @Test
+    public void testOrganiseCallsSaveFileWithCorrectOutputFormatYYYYMMMMMMDD() throws IOException, ImageReadException {
+        when(photoDao.getFiles(anyString())).thenReturn(asList(path));
+        photoService.organise("inputDirectory", "outputDirectory", "YYYY/MM - MMMM/DD");
+        verify(photoDao).saveFile("outputDirectory/2015/01 - January/01", path);
     }
 
     @Test
     public void testOrganiseThrowsIoExceptionIfDaoThrowsIoException() throws IOException, ImageReadException {
         doThrow(IOException.class).when(photoDao).saveFile(anyString(), any(Path.class));
         try {
-            photoService.organise("inputDirectory", "outputDirectory");
+            photoService.organise("inputDirectory", "outputDirectory", "YYYY/MM/DD");
         } catch (IOException e) {
             verify(photoDao).saveFile(startsWith("outputDirectory"), eq(path));
         }
