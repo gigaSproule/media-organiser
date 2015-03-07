@@ -8,8 +8,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import static java.io.File.separator;
-import static java.nio.file.Files.copy;
-import static java.nio.file.Files.createTempDirectory;
+import static java.nio.file.Files.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static uk.co.bensproule.photoorganiser.domain.DateConstants.*;
@@ -34,8 +33,8 @@ public class MainITest {
         String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", YYYY_MM_DD};
         Main.main(args);
 
-        File expectedFile = new File(outputDirectory + separator + "2015" + separator + "02" + separator + "15" + separator + "image.jpg");
-        assertThat(expectedFile.exists(), is(true));
+        Path expectedFile = new File(outputDirectory + separator + "2015" + separator + "02" + separator + "15" + separator + "image.jpg").toPath();
+        assertThat(exists(expectedFile), is(true));
     }
 
     @Test
@@ -47,8 +46,8 @@ public class MainITest {
         String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", YYYY_MMMM_DD};
         Main.main(args);
 
-        File expectedFile = new File(outputDirectory + separator + "2015" + separator + "February" + separator + "15" + separator + "image.jpg");
-        assertThat(expectedFile.exists(), is(true));
+        Path expectedFile = new File(outputDirectory + separator + "2015" + separator + "February" + separator + "15" + separator + "image.jpg").toPath();
+        assertThat(exists(expectedFile), is(true));
     }
 
     @Test
@@ -60,7 +59,7 @@ public class MainITest {
         String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", YYYY_MM_MMMM_DD};
         Main.main(args);
 
-        File expectedFile = new File(outputDirectory + separator + "2015" + separator + "02 - February" + separator + "15" + separator + "image.jpg");
-        assertThat(expectedFile.exists(), is(true));
+        Path expectedFile = new File(outputDirectory + separator + "2015" + separator + "02 - February" + separator + "15" + separator + "image.jpg").toPath();
+        assertThat(exists(expectedFile), is(true));
     }
 }
