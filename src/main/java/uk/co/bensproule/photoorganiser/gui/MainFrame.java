@@ -1,6 +1,7 @@
 package uk.co.bensproule.photoorganiser.gui;
 
 import org.apache.commons.imaging.ImageReadException;
+import uk.co.bensproule.photoorganiser.domain.DateConstants;
 import uk.co.bensproule.photoorganiser.service.PhotoService;
 
 import javax.swing.*;
@@ -80,13 +81,13 @@ public class MainFrame extends JFrame {
         });
 
         buttonGroup = new ButtonGroup();
-        JRadioButton numberFormat = new JRadioButton("YYYY/MM/DD");
-        numberFormat.setActionCommand("YYYY/MM/DD");
+        JRadioButton numberFormat = new JRadioButton(DateConstants.YYYY_MM_DD);
+        numberFormat.setActionCommand(DateConstants.YYYY_MM_DD);
         numberFormat.setSelected(true);
-        JRadioButton textFormat = new JRadioButton("YYYY/MMMMM/DD");
-        textFormat.setActionCommand("YYYY/MMMM/DD");
-        JRadioButton numberTextFormat = new JRadioButton("YYYY/MM - MMMMM/DD");
-        numberTextFormat.setActionCommand("YYYY/MM - MMMM/DD");
+        JRadioButton textFormat = new JRadioButton(DateConstants.YYYY_MMMM_DD);
+        textFormat.setActionCommand(DateConstants.YYYY_MMMM_DD);
+        JRadioButton numberTextFormat = new JRadioButton(DateConstants.YYYY_MM_MMMM_DD);
+        numberTextFormat.setActionCommand(DateConstants.YYYY_MM_MMMM_DD);
 
         buttonGroup.add(numberFormat);
         buttonGroup.add(textFormat);

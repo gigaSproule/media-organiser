@@ -35,8 +35,13 @@ public class Main {
                 throw new IllegalArgumentException("Please provide the output directory to put the organised photos using the -od argument");
             }
 
+            String outputFormat = cmd.getOptionValue("outputformat");
+            if (isBlank(outputFormat)) {
+                throw new IllegalArgumentException("Please provide the output format to define the output path");
+            }
+
             PhotoService photoService = new PhotoService();
-            photoService.organise(inputDirectory, outputDirectory, cmd.getOptionValue("outputformat"));
+            photoService.organise(inputDirectory, outputDirectory, outputFormat);
         }
     }
 }
