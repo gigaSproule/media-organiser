@@ -2,7 +2,6 @@ package uk.co.bensproule.photoorganiser.dao;
 
 import org.junit.Before;
 import org.junit.Test;
-import uk.co.bensproule.photoorganiser.test.DeleteFileVisitor;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +17,6 @@ import static org.hamcrest.Matchers.is;
 import static uk.co.bensproule.photoorganiser.test.Constants.*;
 
 public class PhotoDaoITest {
-    private Path tempPath;
     private PhotoDao photoDao;
     private Path staticPath;
     private Path sourceImagePath;
@@ -27,9 +25,7 @@ public class PhotoDaoITest {
 
     @Before
     public void setup() throws URISyntaxException, IOException {
-        tempPath = createTempDirectory("test");
         photoDao = new PhotoDao();
-        walkFileTree(tempPath, new DeleteFileVisitor());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -54,6 +50,7 @@ public class PhotoDaoITest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsNotADirectory() throws IOException {
+        Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
         photoDao.getFiles(path.toString());
     }
@@ -66,6 +63,7 @@ public class PhotoDaoITest {
 
     @Test
     public void testGetFilesDoesNotReturnNonImageFiles() throws IOException {
+        Path tempPath = createTempDirectory("test");
         createTempFile(tempPath, "test", ".txt");
         List<Path> paths = photoDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(0));
@@ -73,6 +71,7 @@ public class PhotoDaoITest {
 
     @Test
     public void testGetFilesDoesNotReturnPngFile() throws IOException {
+        Path tempPath = createTempDirectory("test");
         createTempFile(tempPath, "test", ".png");
         List<Path> paths = photoDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(0));
@@ -80,6 +79,7 @@ public class PhotoDaoITest {
 
     @Test
     public void testGetFilesDoesNotReturnGifFile() throws IOException {
+        Path tempPath = createTempDirectory("test");
         createTempFile(tempPath, "test", ".gif");
         List<Path> paths = photoDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(0));
@@ -87,6 +87,7 @@ public class PhotoDaoITest {
 
     @Test
     public void testGetFilesDoesNotReturnBmpFile() throws IOException {
+        Path tempPath = createTempDirectory("test");
         createTempFile(tempPath, "test", ".bmp");
         List<Path> paths = photoDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(0));
@@ -94,6 +95,7 @@ public class PhotoDaoITest {
 
     @Test
     public void testGetFilesReturnsJpgFile() throws IOException {
+        Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
 
         List<Path> paths = photoDao.getFiles(tempPath.toString());
@@ -103,6 +105,7 @@ public class PhotoDaoITest {
 
     @Test
     public void testGetFilesReturnsJpegFile() throws IOException {
+        Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
 
         List<Path> paths = photoDao.getFiles(tempPath.toString());
@@ -112,6 +115,7 @@ public class PhotoDaoITest {
 
     @Test
     public void testGetFilesReturnsTifFile() throws IOException {
+        Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".tif");
 
         List<Path> paths = photoDao.getFiles(tempPath.toString());
@@ -121,6 +125,7 @@ public class PhotoDaoITest {
 
     @Test
     public void testGetFilesReturnsTiffFile() throws IOException {
+        Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".tiff");
 
         List<Path> paths = photoDao.getFiles(tempPath.toString());
@@ -130,6 +135,7 @@ public class PhotoDaoITest {
 
     @Test
     public void testGetFilesReturnsFilesWithinSubDirectories() throws IOException {
+        Path tempPath = createTempDirectory("test");
         Path directory = createTempDirectory(tempPath, "test");
         Path path = createTempFile(directory, "test", ".jpg");
 
@@ -140,18 +146,21 @@ public class PhotoDaoITest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsNull() throws IOException {
+        Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
         photoDao.saveFile(null, path);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsEmpty() throws IOException {
+        Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
         photoDao.saveFile("", path);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsBlank() throws IOException {
+        Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
         photoDao.saveFile(" ", path);
     }
@@ -163,6 +172,7 @@ public class PhotoDaoITest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsNotADirectory() throws IOException {
+        Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
         photoDao.saveFile(path.toString(), path);
     }
