@@ -9,21 +9,19 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.io.File.separator;
 import static java.nio.file.Files.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static uk.co.bensproule.photoorganiser.test.Constants.*;
 
 public class PhotoDaoITest {
     private Path tempPath;
     private PhotoDao photoDao;
-    private Path sourcePath;
-    private String sourceDirectory;
+    private Path staticPath;
+    private Path sourceImagePath;
     private Path destinationPath;
     private String destinationDirectory;
 
@@ -32,10 +30,6 @@ public class PhotoDaoITest {
         tempPath = createTempDirectory("test");
         photoDao = new PhotoDao();
         walkFileTree(tempPath, new DeleteFileVisitor());
-        sourcePath = createTempDirectory(SOURCE_PATH);
-        sourceDirectory = sourcePath.toString();
-        destinationPath = createTempDirectory(DESTINATION_PATH);
-        destinationDirectory = destinationPath.toString();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -175,86 +169,72 @@ public class PhotoDaoITest {
 
     @Test
     public void testSaveFileCreatesFile() throws IOException {
-        Path sourceImagePath = new File(sourceDirectory + separator + "image.jpg").toPath();
-        Path staticPath = new File(RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
-        copy(staticPath, sourceImagePath);
-
+        createImageInTempDirectory();
         photoDao.saveFile(destinationDirectory, sourceImagePath);
-
         assertThat(exists(destinationPath), is(true));
+        checkFilesExist(new File(destinationDirectory + separator + "image.jpg").toPath());
     }
 
     @Test
     public void testSaveFileCreatesDirectoriesIfTheyDoNotExist() throws IOException {
-        Path staticPath = new File(RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
-        Path sourceImagePath = new File(sourceDirectory + separator + "image.jpg").toPath();
-        copy(staticPath, sourceImagePath);
-
+        createImageInTempDirectory();
         photoDao.saveFile(destinationDirectory + separator + "directory", sourceImagePath);
         assertThat(exists(new File(destinationDirectory + separator + "directory").toPath()), is(true));
     }
 
     @Test
     public void testSaveFileDeletesOldFile() throws IOException {
-        Path staticPath = new File(RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
-        Path sourceImagePath = new File(sourceDirectory + separator + "image.jpg").toPath();
-        copy(staticPath, sourceImagePath);
-
+        createImageInTempDirectory();
         photoDao.saveFile(destinationDirectory, sourceImagePath);
-
         assertThat(notExists(sourceImagePath), is(true));
     }
 
     @Test
     public void testSaveFileCreatesNewFileWithTheSameDataAsTheOldFile() throws IOException {
-        Path staticPath = new File(RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
-        Path sourceImagePath = new File(sourceDirectory + separator + "image.jpg").toPath();
-        copy(staticPath, sourceImagePath);
-
+        createImageInTempDirectory();
         photoDao.saveFile(destinationDirectory, sourceImagePath);
-
         assertThat(getAttribute(new File(destinationDirectory + separator + "image.jpg").toPath(), "size"), is(getAttribute(staticPath, "size")));
     }
 
     @Test
     public void testSaveFileRenamesFileIfFileInOutputAlreadyHasThatName() throws IOException {
-        Path sourceImagePath = new File(sourceDirectory + separator + "image.jpg").toPath();
-        Path staticPath = new File(RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
-
-        copy(staticPath, sourceImagePath);
-        Path preCreatedFile = new File(destinationDirectory + separator + "image.jpg").toPath();
-        copy(staticPath, preCreatedFile);
+        createImageInTempDirectory();
+        Path preCreatedFile = addFileToDestination("image.jpg");
 
         photoDao.saveFile(destinationDirectory, sourceImagePath);
 
-        List<Path> createdFiles = new ArrayList<>();
-        Files.list(destinationPath).forEach(createdFiles::add);
-
-        assertThat(createdFiles, hasSize(2));
-        assertThat(createdFiles.get(0), is(preCreatedFile));
-        assertThat(createdFiles.get(1), is(new File(destinationDirectory + separator + "image0.jpg").toPath()));
+        checkFilesExist(preCreatedFile, new File(destinationDirectory + separator + "image0.jpg").toPath());
     }
 
     @Test
     public void testSaveFileIncrementsRenamedFileIndexIfFileInOutputAlreadyHasThatName() throws IOException {
-        Path sourceImagePath = new File(sourceDirectory + separator + "image.jpg").toPath();
-        Path staticPath = new File(RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
-
-        copy(staticPath, sourceImagePath);
-        Path preCreatedFile = new File(destinationDirectory + separator + "image.jpg").toPath();
-        copy(staticPath, preCreatedFile);
-        Path preCreatedFileIncremented = new File(destinationDirectory + separator + "image0.jpg").toPath();
-        copy(staticPath, preCreatedFileIncremented);
+        createImageInTempDirectory();
+        Path preCreatedFile = addFileToDestination("image.jpg");
+        Path preCreatedFileIncremented = addFileToDestination("image0.jpg");
 
         photoDao.saveFile(destinationDirectory, sourceImagePath);
 
-        List<Path> createdFiles = new ArrayList<>();
-        Files.list(destinationPath).forEach(createdFiles::add);
-
-        assertThat(createdFiles, hasSize(3));
-        assertThat(createdFiles.get(0), is(preCreatedFile));
-        assertThat(createdFiles.get(1), is(preCreatedFileIncremented));
-        assertThat(createdFiles.get(2), is(new File(destinationDirectory + separator + "image1.jpg").toPath()));
+        checkFilesExist(preCreatedFile, preCreatedFileIncremented, new File(destinationDirectory + separator + "image1.jpg").toPath());
     }
 
+    private Path addFileToDestination(String fileName) throws IOException {
+        Path preCreatedFile = new File(destinationDirectory + separator + fileName).toPath();
+        copy(staticPath, preCreatedFile);
+        return preCreatedFile;
+    }
+
+    private void checkFilesExist(Path... files) throws IOException {
+        assertThat(Files.list(destinationPath).toArray().length, is(files.length));
+        for (Path file : files) {
+            assertThat(exists(file), is(true));
+        }
+    }
+
+    private void createImageInTempDirectory() throws IOException {
+        staticPath = new File(RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
+        sourceImagePath = new File(createTempDirectory(SOURCE_PATH).toString() + separator + "image.jpg").toPath();
+        destinationPath = createTempDirectory(DESTINATION_PATH);
+        destinationDirectory = destinationPath.toString();
+        copy(staticPath, sourceImagePath);
+    }
 }
