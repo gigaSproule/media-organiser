@@ -47,9 +47,9 @@ public class PhotoDao {
 
             String contentType = probeContentType(path);
             if (contentType != null &&
-                    (contentType.equalsIgnoreCase("image/jpg") ||
-                            contentType.equalsIgnoreCase("image/jpeg") ||
-                            contentType.equalsIgnoreCase("image/tiff"))) {
+                (contentType.equalsIgnoreCase("image/jpg") ||
+                    contentType.equalsIgnoreCase("image/jpeg") ||
+                    contentType.equalsIgnoreCase("image/tiff"))) {
                 images.add(path);
             }
         }

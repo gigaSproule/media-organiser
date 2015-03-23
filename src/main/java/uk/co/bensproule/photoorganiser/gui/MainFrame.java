@@ -44,7 +44,7 @@ public class MainFrame extends JFrame {
         JButton inputFileButton = new JButton("Input Directory");
         jPanel.add(inputFileButton);
 
-        inputFileButton.addActionListener(e -> {
+        inputFileButton.addActionListener(event -> {
             int returnVal = inputDirectoryChooser.showOpenDialog(MainFrame.this);
 
             if (returnVal == APPROVE_OPTION) {
@@ -68,9 +68,9 @@ public class MainFrame extends JFrame {
         JButton outputDirectoryButton = new JButton("Output Directory");
         jPanel.add(outputDirectoryButton);
 
-        outputDirectoryButton.addActionListener(e -> {
+        outputDirectoryButton.addActionListener(event -> {
             int returnVal = outputDirectoryChooser
-                    .showSaveDialog(MainFrame.this);
+                .showSaveDialog(MainFrame.this);
 
             if (returnVal == APPROVE_OPTION) {
                 File file = outputDirectoryChooser.getSelectedFile();
@@ -110,7 +110,7 @@ public class MainFrame extends JFrame {
         JButton organise = new JButton("Organise");
         jPanel.add(organise);
 
-        organise.addActionListener(e -> {
+        organise.addActionListener(event -> {
             File inputDirectory = inputDirectoryChooser.getSelectedFile();
 
             if (inputDirectory == null) {
@@ -128,8 +128,8 @@ public class MainFrame extends JFrame {
             PhotoService photoService = new PhotoService();
             try {
                 photoService.organise(inputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath(), buttonGroup.getSelection().getActionCommand());
-            } catch (IOException | ImageReadException ex) {
-                ex.printStackTrace();
+            } catch (IOException | ImageReadException e) {
+                showMessageDialog(null, e.getLocalizedMessage());
             }
 
             showMessageDialog(null, "Organised");

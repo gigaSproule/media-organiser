@@ -37,7 +37,7 @@ public class PhotoService {
                 TiffField dateTime = ((JpegImageMetadata) metadata).findEXIFValueWithExactMatch(EXIF_TAG_DATE_TIME_ORIGINAL);
                 zonedDateTime = ZonedDateTime.parse(dateTime.getValue().toString(), formatter);
             } //else if (metadata instanceof TiffImageMetadata) {
-                // TODO: Find a way to get the time stamp data from tiff images
+            // TODO: Find a way to get the time stamp data from tiff images
 //                TiffField dateTime = ((TiffImageMetadata) metadata).findEXIFValueWithExactMatch(EXIF_TAG_DATE_TIME_ORIGINAL);
 //                zonedDateTime = ZonedDateTime.parse(dateTime.getValue().toString(), formatter);
 //            }
