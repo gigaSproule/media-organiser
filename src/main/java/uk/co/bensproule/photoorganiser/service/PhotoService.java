@@ -42,7 +42,7 @@ public class PhotoService {
 //                zonedDateTime = ZonedDateTime.parse(dateTime.getValue().toString(), formatter);
 //            }
 
-            notNull(zonedDateTime, "Could not get the ZonedDateTime from the file");
+            notNull(zonedDateTime, "Could not get the ZonedDateTime from the file {}", path.getFileName());
 
             DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outputFormat);
             photoDao.saveFile(outputDirectory + "/" + zonedDateTime.format(outputFormatter), path);

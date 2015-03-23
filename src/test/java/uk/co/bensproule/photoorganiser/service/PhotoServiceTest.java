@@ -24,6 +24,8 @@ import java.util.ArrayList;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -150,6 +152,22 @@ public class PhotoServiceTest {
             photoService.organise("inputDirectory", "outputDirectory", YYYY_MM_DD);
         } catch (IOException e) {
             verify(photoDao).saveFile(startsWith("outputDirectory"), eq(path));
+        }
+    }
+
+    @Test
+    public void testOrganiseThrowsNullPointerExceptionWithFileNameWhenZonedDateTimeUnavailable() throws ImageReadException, IOException {
+        String expectedFileName = "/expected/file/name";
+        when(tiffField.getValue()).thenReturn(null);
+        when(path.getFileName()).thenReturn(new File(expectedFileName).toPath());
+
+        try {
+            photoService.organise("inputDirectory", "outputDirectory", YYYY_MM_DD);
+        } catch (NullPointerException e) {
+            assertThat(e.getMessage(), containsString(expectedFileName));
+            verify(tiffField).getValue();
+            verify(path).getFileName();
+            verify(photoDao).saveFile(anyString(), any(Path.class));
         }
     }
 }
