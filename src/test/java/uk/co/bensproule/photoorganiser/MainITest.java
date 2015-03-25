@@ -62,4 +62,17 @@ public class MainITest {
         Path expectedFile = new File(outputDirectory + separator + "2015" + separator + "02 - February" + separator + "15" + separator + "image.jpg").toPath();
         assertThat(exists(expectedFile), is(true));
     }
+
+    @Test
+    public void testMainMovesImageWithoutImageMetadataIntoCorrectPlace() throws Exception {
+        Path inputDirectoryPath = new File(inputDirectory + separator + "1425748958422.jpg").toPath();
+        Path staticPath = new File(RESOURCES_DIRECTORY + separator + "1425748958422.jpg").toPath();
+        copy(staticPath, inputDirectoryPath);
+
+        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", YYYY_MM_DD};
+        Main.main(args);
+
+        Path expectedFile = new File(outputDirectory + separator + "2015" + separator + "03" + separator + "07" + separator + "1425748958422.jpg").toPath();
+        assertThat(exists(expectedFile), is(true));
+    }
 }
