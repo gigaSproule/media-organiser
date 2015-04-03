@@ -8,11 +8,17 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import static java.io.File.separator;
-import static java.nio.file.Files.*;
+import static java.nio.file.Files.copy;
+import static java.nio.file.Files.createTempDirectory;
+import static java.nio.file.Files.exists;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static uk.co.bensproule.photoorganiser.domain.DateConstants.*;
-import static uk.co.bensproule.photoorganiser.test.Constants.*;
+import static uk.co.bensproule.photoorganiser.domain.DateConstants.YYYY_MMMM_DD;
+import static uk.co.bensproule.photoorganiser.domain.DateConstants.YYYY_MM_DD;
+import static uk.co.bensproule.photoorganiser.domain.DateConstants.YYYY_MM_MMMM_DD;
+import static uk.co.bensproule.photoorganiser.test.Constants.DESTINATION_PATH;
+import static uk.co.bensproule.photoorganiser.test.Constants.RESOURCES_DIRECTORY;
+import static uk.co.bensproule.photoorganiser.test.Constants.SOURCE_PATH;
 
 public class MainITest {
     private String inputDirectory;

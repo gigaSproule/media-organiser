@@ -10,12 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.io.File.separator;
-import static java.nio.file.Files.*;
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.exists;
+import static java.nio.file.Files.isDirectory;
+import static java.nio.file.Files.isRegularFile;
+import static java.nio.file.Files.list;
+import static java.nio.file.Files.move;
+import static java.nio.file.Files.notExists;
+import static java.nio.file.Files.probeContentType;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.join;
+import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.IMAGE_JPEG;
+import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.IMAGE_JPG;
+import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.IMAGE_TIFF;
 
 @Slf4j
 public class PhotoDao {
+
     public List<Path> getFiles(String inputDirectory) throws IOException {
         if (isBlank(inputDirectory)) {
             throw new IllegalArgumentException("An input directory should be provided");
@@ -47,9 +58,9 @@ public class PhotoDao {
 
             String contentType = probeContentType(path);
             if (contentType != null &&
-                (contentType.equalsIgnoreCase("image/jpg") ||
-                    contentType.equalsIgnoreCase("image/jpeg") ||
-                    contentType.equalsIgnoreCase("image/tiff"))) {
+                (contentType.equalsIgnoreCase(IMAGE_JPG) ||
+                    contentType.equalsIgnoreCase(IMAGE_JPEG) ||
+                    contentType.equalsIgnoreCase(IMAGE_TIFF))) {
                 images.add(path);
             }
         }

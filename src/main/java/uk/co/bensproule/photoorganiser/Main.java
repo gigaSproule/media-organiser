@@ -9,9 +9,15 @@ import uk.co.bensproule.photoorganiser.service.PhotoService;
 
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.createMimeTypesFile;
+import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.requiresMimeTypesFile;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+        if (requiresMimeTypesFile()) {
+            createMimeTypesFile();
+        }
+
         if (args.length == 0) {
             invokeLater(() -> {
                 MainFrame mainFrame = new MainFrame();
