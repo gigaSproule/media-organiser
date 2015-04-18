@@ -128,7 +128,7 @@ public class MainFrame extends JFrame {
             PhotoService photoService = new PhotoService();
             try {
                 photoService.organise(inputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath(), buttonGroup.getSelection().getActionCommand());
-            } catch (IOException | ImageReadException e) {
+            } catch (Exception e) {
                 showMessageDialog(null, e.getLocalizedMessage());
             }
 
