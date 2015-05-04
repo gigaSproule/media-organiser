@@ -1,10 +1,7 @@
 package uk.co.bensproule.photoorganiser.dao;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +21,6 @@ import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.IMAGE_JPEG;
 import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.IMAGE_JPG;
 import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.IMAGE_TIFF;
 
-@Slf4j
 public class PhotoDao {
 
     public List<Path> getFiles(String inputDirectory) throws IOException {
@@ -83,7 +79,7 @@ public class PhotoDao {
         createDirectories(directory);
         Path newPath = new File(outputDirectory + separator + path.getFileName().toString()).toPath();
 
-        if (Files.exists(newPath)) {
+        if (exists(newPath)) {
             int i = 0;
             do {
                 newPath = incrementFilenameIndex(outputDirectory, path, i);

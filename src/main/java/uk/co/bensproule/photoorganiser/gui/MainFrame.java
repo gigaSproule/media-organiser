@@ -1,13 +1,11 @@
 package uk.co.bensproule.photoorganiser.gui;
 
-import org.apache.commons.imaging.ImageReadException;
 import uk.co.bensproule.photoorganiser.domain.DateConstants;
 import uk.co.bensproule.photoorganiser.service.PhotoService;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 
 import static javax.swing.JFileChooser.APPROVE_OPTION;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;

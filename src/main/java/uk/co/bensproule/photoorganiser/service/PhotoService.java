@@ -1,6 +1,5 @@
 package uk.co.bensproule.photoorganiser.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.common.ImageMetadata;
@@ -20,7 +19,6 @@ import static java.time.Instant.ofEpochMilli;
 import static org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL;
 import static org.apache.commons.lang3.Validate.notNull;
 
-@Slf4j
 public class PhotoService {
     private PhotoDao photoDao;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss").withZone(ZoneId.of("UTC"));
