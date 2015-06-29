@@ -1,21 +1,20 @@
-package uk.co.bensproule.photoorganiser;
+package com.benjaminsproule.photoorganiser;
 
+import com.benjaminsproule.photoorganiser.gui.MainFrame;
+import com.benjaminsproule.photoorganiser.service.PhotoService;
+import com.benjaminsproule.photoorganiser.util.MimeTypesUtil;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
-import uk.co.bensproule.photoorganiser.gui.MainFrame;
-import uk.co.bensproule.photoorganiser.service.PhotoService;
 
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.createMimeTypesFile;
-import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.requiresMimeTypesFile;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        if (requiresMimeTypesFile()) {
-            createMimeTypesFile();
+        if (MimeTypesUtil.requiresMimeTypesFile()) {
+            MimeTypesUtil.createMimeTypesFile();
         }
 
         if (args.length == 0) {

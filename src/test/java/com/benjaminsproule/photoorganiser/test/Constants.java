@@ -1,4 +1,4 @@
-package uk.co.bensproule.photoorganiser.test;
+package com.benjaminsproule.photoorganiser.test;
 
 import static java.io.File.separator;
 

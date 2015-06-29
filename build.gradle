@@ -6,7 +6,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'application'
 
-group = 'uk.co.bensproule'
+group = 'com.benjaminsproule'
 version = '1.0-SNAPSHOT'
 
 description = """"""
@@ -14,7 +14,7 @@ description = """"""
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-mainClassName = "uk.co.bensproule.photoorganiser.Main"
+mainClassName = "com.benjaminsproule.photoorganiser.Main"
 
 repositories {
     mavenLocal()

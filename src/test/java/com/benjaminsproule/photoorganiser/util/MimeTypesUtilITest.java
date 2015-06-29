@@ -1,5 +1,6 @@
-package uk.co.bensproule.photoorganiser.util;
+package com.benjaminsproule.photoorganiser.util;
 
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,12 +12,8 @@ import java.nio.file.Path;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.IMAGES_JPG_MAPPING;
-import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.IMAGES_TIFF;
 
 public class MimeTypesUtilITest {
 
@@ -66,7 +63,7 @@ public class MimeTypesUtilITest {
 
         MimeTypesUtil.createMimeTypesFile();
 
-        assertThat(Files.readAllLines(mimeTypes), hasItems(IMAGES_JPG_MAPPING, IMAGES_TIFF));
+        assertThat(Files.readAllLines(mimeTypes), Matchers.hasItems(MimeTypesUtil.IMAGES_JPG_MAPPING, MimeTypesUtil.IMAGES_TIFF));
     }
 
     @Test
@@ -88,11 +85,11 @@ public class MimeTypesUtilITest {
             return;
         }
 
-        populateMimeTypesFile(IMAGES_JPG_MAPPING, IMAGES_TIFF);
+        populateMimeTypesFile(MimeTypesUtil.IMAGES_JPG_MAPPING, MimeTypesUtil.IMAGES_TIFF);
 
         MimeTypesUtil.createMimeTypesFile();
 
-        assertThat(Files.readAllLines(mimeTypes), containsInAnyOrder(IMAGES_JPG_MAPPING, IMAGES_TIFF));
+        assertThat(Files.readAllLines(mimeTypes), Matchers.containsInAnyOrder(MimeTypesUtil.IMAGES_JPG_MAPPING, MimeTypesUtil.IMAGES_TIFF));
     }
 
     private void populateMimeTypesFile(final String... str) throws IOException {

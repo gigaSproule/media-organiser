@@ -1,5 +1,9 @@
-package uk.co.bensproule.photoorganiser;
+package com.benjaminsproule.photoorganiser;
 
+import com.benjaminsproule.photoorganiser.domain.DateConstants;
+import com.benjaminsproule.photoorganiser.service.PhotoService;
+import com.benjaminsproule.photoorganiser.test.Constants;
+import com.benjaminsproule.photoorganiser.util.MimeTypesUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,21 +11,12 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import uk.co.bensproule.photoorganiser.service.PhotoService;
-import uk.co.bensproule.photoorganiser.util.MimeTypesUtil;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.doNothing;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-import static uk.co.bensproule.photoorganiser.domain.DateConstants.YYYY_MM_DD;
-import static uk.co.bensproule.photoorganiser.test.Constants.DESTINATION_PATH;
-import static uk.co.bensproule.photoorganiser.test.Constants.SOURCE_PATH;
+import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Main.class, MimeTypesUtil.class})
@@ -42,7 +37,7 @@ public class MainTest {
 
     @Test
     public void testMainDoesNotCallCreateMimeTypesFileIfRequiresMimeTypesFileFalse() throws Exception {
-        String[] args = new String[]{"-id", SOURCE_PATH, "-od", DESTINATION_PATH, "-of", YYYY_MM_DD};
+        String[] args = new String[]{"-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH, "-of", DateConstants.YYYY_MM_DD};
         Main.main(args);
 
         verifyStatic();
@@ -55,7 +50,7 @@ public class MainTest {
     public void testMainCallsCreateMimeTypesFileIfRequiresMimeTypesFileTrue() throws Exception {
         when(MimeTypesUtil.requiresMimeTypesFile()).thenReturn(true);
 
-        String[] args = new String[]{"-id", SOURCE_PATH, "-od", DESTINATION_PATH, "-of", YYYY_MM_DD};
+        String[] args = new String[]{"-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH, "-of", DateConstants.YYYY_MM_DD};
         Main.main(args);
 
         verifyStatic();
@@ -65,7 +60,7 @@ public class MainTest {
 
     @Test
     public void testMainThrowsIllegalArgumentExceptionWhenInputFileArgumentMissing() throws Exception {
-        String[] args = new String[]{"-od", DESTINATION_PATH, "-of", YYYY_MM_DD};
+        String[] args = new String[]{"-od", Constants.DESTINATION_PATH, "-of", DateConstants.YYYY_MM_DD};
         try {
             Main.main(args);
             fail("IllegalArgumentException should have been thrown");
@@ -76,7 +71,7 @@ public class MainTest {
 
     @Test
     public void testMainThrowsIllegalArgumentExceptionWhenDESTINATION_PATHArgumentMissing() throws Exception {
-        String[] args = new String[]{"-id", SOURCE_PATH, "-of", YYYY_MM_DD};
+        String[] args = new String[]{"-id", Constants.SOURCE_PATH, "-of", DateConstants.YYYY_MM_DD};
         try {
             Main.main(args);
             fail("IllegalArgumentException should have been thrown");
@@ -87,7 +82,7 @@ public class MainTest {
 
     @Test
     public void testMainThrowsIllegalArgumentExceptionWhenOutputFormatArgumentMissing() throws Exception {
-        String[] args = new String[]{"-id", SOURCE_PATH, "-od", DESTINATION_PATH};
+        String[] args = new String[]{"-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH};
         try {
             Main.main(args);
             fail("IllegalArgumentException should have been thrown");
@@ -98,7 +93,7 @@ public class MainTest {
 
     @Test
     public void testMainDoesNotThrowIllegalArgumentExceptionWhenArgumentsPassed() throws Exception {
-        String[] args = new String[]{"-id", SOURCE_PATH, "-od", DESTINATION_PATH, "-of", YYYY_MM_DD};
+        String[] args = new String[]{"-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH, "-of", DateConstants.YYYY_MM_DD};
         Main.main(args);
         verify(photoService).organise(anyString(), anyString(), anyString());
     }

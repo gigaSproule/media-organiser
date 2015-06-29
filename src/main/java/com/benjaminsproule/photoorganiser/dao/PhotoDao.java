@@ -1,4 +1,4 @@
-package uk.co.bensproule.photoorganiser.dao;
+package com.benjaminsproule.photoorganiser.dao;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,20 +6,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.benjaminsproule.photoorganiser.util.MimeTypesUtil.*;
 import static java.io.File.separator;
-import static java.nio.file.Files.createDirectories;
-import static java.nio.file.Files.exists;
-import static java.nio.file.Files.isDirectory;
-import static java.nio.file.Files.isRegularFile;
-import static java.nio.file.Files.list;
-import static java.nio.file.Files.move;
-import static java.nio.file.Files.notExists;
-import static java.nio.file.Files.probeContentType;
+import static java.nio.file.Files.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.join;
-import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.IMAGE_JPEG;
-import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.IMAGE_JPG;
-import static uk.co.bensproule.photoorganiser.util.MimeTypesUtil.IMAGE_TIFF;
 
 public class PhotoDao {
 

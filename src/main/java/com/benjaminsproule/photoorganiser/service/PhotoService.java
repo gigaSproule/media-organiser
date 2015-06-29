@@ -1,11 +1,11 @@
-package uk.co.bensproule.photoorganiser.service;
+package com.benjaminsproule.photoorganiser.service;
 
+import com.benjaminsproule.photoorganiser.dao.PhotoDao;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
 import org.apache.commons.imaging.formats.tiff.TiffField;
-import uk.co.bensproule.photoorganiser.dao.PhotoDao;
 
 import java.io.File;
 import java.io.IOException;

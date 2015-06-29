@@ -1,7 +1,7 @@
-package uk.co.bensproule.photoorganiser.gui;
+package com.benjaminsproule.photoorganiser.gui;
 
-import uk.co.bensproule.photoorganiser.domain.DateConstants;
-import uk.co.bensproule.photoorganiser.service.PhotoService;
+import com.benjaminsproule.photoorganiser.domain.DateConstants;
+import com.benjaminsproule.photoorganiser.service.PhotoService;
 
 import javax.swing.*;
 import java.awt.*;

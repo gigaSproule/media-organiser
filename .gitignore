@@ -11,4 +11,8 @@ atlassian-ide-plugin.xml
 **/test.xml
 build
 .gradle
+.gradletasknamecache
+/.apt_generated/
+/bin/
+local.properties
 src/test/resources/dynamic/*

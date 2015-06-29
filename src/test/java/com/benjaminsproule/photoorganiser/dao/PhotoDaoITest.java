@@ -1,5 +1,6 @@
-package uk.co.bensproule.photoorganiser.dao;
+package com.benjaminsproule.photoorganiser.dao;
 
+import com.benjaminsproule.photoorganiser.test.Constants;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,7 +15,6 @@ import static java.io.File.separator;
 import static java.nio.file.Files.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static uk.co.bensproule.photoorganiser.test.Constants.*;
 
 public class PhotoDaoITest {
     private PhotoDao photoDao;
@@ -241,9 +241,9 @@ public class PhotoDaoITest {
     }
 
     private void createImageInTempDirectory() throws IOException {
-        staticPath = new File(RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
-        sourceImagePath = new File(createTempDirectory(SOURCE_PATH).toString() + separator + "image.jpg").toPath();
-        destinationPath = createTempDirectory(DESTINATION_PATH);
+        staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
+        sourceImagePath = new File(Files.createTempDirectory(Constants.SOURCE_PATH).toString() + separator + "image.jpg").toPath();
+        destinationPath = Files.createTempDirectory(Constants.DESTINATION_PATH);
         destinationDirectory = destinationPath.toString();
         copy(staticPath, sourceImagePath);
     }
