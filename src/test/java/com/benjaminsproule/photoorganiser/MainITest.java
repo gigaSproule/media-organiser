@@ -3,6 +3,7 @@ package com.benjaminsproule.photoorganiser;
 import com.benjaminsproule.photoorganiser.domain.DateConstants;
 import com.benjaminsproule.photoorganiser.test.Constants;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -75,6 +76,33 @@ public class MainITest {
         Main.main(args);
 
         Path expectedFile = new File(outputDirectory + separator + "2015" + separator + "03" + separator + "07" + separator + "1425748958422.jpg").toPath();
+        assertThat(exists(expectedFile), is(true));
+    }
+
+    @Ignore // TODO: Find a tiff file with a created timestamp
+    @Test
+    public void testMainMovesTifImageWithImageMetadataIntoCorrectPlace() throws Exception {
+        Path inputDirectoryPath = new File(inputDirectory + separator + "image.tif").toPath();
+        Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "image.tif").toPath();
+        copy(staticPath, inputDirectoryPath);
+
+        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        Main.main(args);
+
+        Path expectedFile = new File(outputDirectory + separator + "2012" + separator + "09" + separator + "07" + separator + "image.tif").toPath();
+        assertThat(exists(expectedFile), is(true));
+    }
+
+    @Test
+    public void testMainMovesMp4VideoWithVideoMetadataIntoCorrectPlace() throws Exception {
+        Path inputDirectoryPath = new File(inputDirectory + separator + "20141130_221411.mp4").toPath();
+        Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "20141130_221411.mp4").toPath();
+        copy(staticPath, inputDirectoryPath);
+
+        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        Main.main(args);
+
+        Path expectedFile = new File(outputDirectory + separator + "2014" + separator + "11" + separator + "30" + separator + "20141130_221411.mp4").toPath();
         assertThat(exists(expectedFile), is(true));
     }
 }

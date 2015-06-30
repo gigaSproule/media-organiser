@@ -11,9 +11,11 @@ public class MimeTypesUtil {
     public static final String IMAGE_JPG = "image/jpg";
     public static final String IMAGE_JPEG = "image/jpeg";
     public static final String IMAGE_TIFF = "image/tiff";
+    public static final String VIDEO_MP4 = "video/mp4";
 
     public static final String IMAGES_JPG_MAPPING = IMAGE_JPG + "\tjpg jpeg";
     public static final String IMAGES_TIFF = IMAGE_TIFF + "\ttif tiff";
+    public static final String VIDEOS_MP4 = VIDEO_MP4 + "\tmp4";
 
     public static void createMimeTypesFile() throws IOException {
         Path mimeTypes = new File(System.getProperty("user.home") + "/.mime.types").toPath();
@@ -28,6 +30,10 @@ public class MimeTypesUtil {
 
         if (!lines.contains(IMAGES_TIFF)) {
             lines.add(IMAGES_TIFF);
+        }
+
+        if (!lines.contains(VIDEO_MP4)) {
+            lines.add(VIDEOS_MP4);
         }
 
         Files.write(mimeTypes, lines);

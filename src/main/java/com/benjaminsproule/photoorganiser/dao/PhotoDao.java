@@ -47,7 +47,8 @@ public class PhotoDao {
             if (contentType != null &&
                 (contentType.equalsIgnoreCase(IMAGE_JPG) ||
                     contentType.equalsIgnoreCase(IMAGE_JPEG) ||
-                    contentType.equalsIgnoreCase(IMAGE_TIFF))) {
+                    contentType.equalsIgnoreCase(IMAGE_TIFF) ||
+                    contentType.equalsIgnoreCase(VIDEO_MP4))) {
                 images.add(path);
             }
         }
