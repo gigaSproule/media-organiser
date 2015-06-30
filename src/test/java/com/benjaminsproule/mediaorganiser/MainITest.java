@@ -1,7 +1,7 @@
-package com.benjaminsproule.photoorganiser;
+package com.benjaminsproule.mediaorganiser;
 
-import com.benjaminsproule.photoorganiser.domain.DateConstants;
-import com.benjaminsproule.photoorganiser.test.Constants;
+import com.benjaminsproule.mediaorganiser.domain.DateConstants;
+import com.benjaminsproule.mediaorganiser.test.Constants;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

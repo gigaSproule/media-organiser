@@ -1,4 +1,4 @@
-package com.benjaminsproule.photoorganiser.domain;
+package com.benjaminsproule.mediaorganiser.domain;
 
 public class DateConstants {
     public static final String YYYY_MM_DD = "YYYY/MM/dd";

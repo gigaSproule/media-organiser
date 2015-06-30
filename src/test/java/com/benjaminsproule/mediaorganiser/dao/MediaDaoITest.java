@@ -1,6 +1,6 @@
-package com.benjaminsproule.photoorganiser.dao;
+package com.benjaminsproule.mediaorganiser.dao;
 
-import com.benjaminsproule.photoorganiser.test.Constants;
+import com.benjaminsproule.mediaorganiser.test.Constants;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,8 +16,8 @@ import static java.nio.file.Files.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class PhotoDaoITest {
-    private PhotoDao photoDao;
+public class MediaDaoITest {
+    private MediaDao mediaDao;
     private Path staticPath;
     private Path sourceImagePath;
     private Path destinationPath;
@@ -25,39 +25,39 @@ public class PhotoDaoITest {
 
     @Before
     public void setup() throws URISyntaxException, IOException {
-        photoDao = new PhotoDao();
+        mediaDao = new MediaDao();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsNull() throws IOException {
-        photoDao.getFiles(null);
+        mediaDao.getFiles(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsEmpty() throws IOException {
-        photoDao.getFiles("");
+        mediaDao.getFiles("");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsBlank() throws IOException {
-        photoDao.getFiles(" ");
+        mediaDao.getFiles(" ");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryDoesNotExist() throws IOException {
-        photoDao.getFiles("doesNotExist");
+        mediaDao.getFiles("doesNotExist");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsNotADirectory() throws IOException {
         Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
-        photoDao.getFiles(path.toString());
+        mediaDao.getFiles(path.toString());
     }
 
     @Test
     public void testGetFilesReturnsEmptyListIfNoFilesInDirectory() throws IOException {
-        List<Path> paths = photoDao.getFiles(createTempDirectory("test").toString());
+        List<Path> paths = mediaDao.getFiles(createTempDirectory("test").toString());
         assertThat(paths.size(), is(0));
     }
 
@@ -65,7 +65,7 @@ public class PhotoDaoITest {
     public void testGetFilesDoesNotReturnNonImageFiles() throws IOException {
         Path tempPath = createTempDirectory("test");
         createTempFile(tempPath, "test", ".txt");
-        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(0));
     }
 
@@ -73,7 +73,7 @@ public class PhotoDaoITest {
     public void testGetFilesDoesNotReturnPngFile() throws IOException {
         Path tempPath = createTempDirectory("test");
         createTempFile(tempPath, "test", ".png");
-        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(0));
     }
 
@@ -81,7 +81,7 @@ public class PhotoDaoITest {
     public void testGetFilesDoesNotReturnGifFile() throws IOException {
         Path tempPath = createTempDirectory("test");
         createTempFile(tempPath, "test", ".gif");
-        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(0));
     }
 
@@ -89,7 +89,7 @@ public class PhotoDaoITest {
     public void testGetFilesDoesNotReturnBmpFile() throws IOException {
         Path tempPath = createTempDirectory("test");
         createTempFile(tempPath, "test", ".bmp");
-        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(0));
     }
 
@@ -98,7 +98,7 @@ public class PhotoDaoITest {
         Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
 
-        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(1));
         assertThat(paths.get(0), is(path));
     }
@@ -108,7 +108,7 @@ public class PhotoDaoITest {
         Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
 
-        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(1));
         assertThat(paths.get(0), is(path));
     }
@@ -118,7 +118,7 @@ public class PhotoDaoITest {
         Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".tif");
 
-        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(1));
         assertThat(paths.get(0), is(path));
     }
@@ -128,7 +128,7 @@ public class PhotoDaoITest {
         Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".tiff");
 
-        List<Path> paths = photoDao.getFiles(tempPath.toString());
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(1));
         assertThat(paths.get(0), is(path));
     }
@@ -139,7 +139,7 @@ public class PhotoDaoITest {
         Path directory = createTempDirectory(tempPath, "test");
         Path path = createTempFile(directory, "test", ".jpg");
 
-        List<Path> paths = photoDao.getFiles(directory.toString());
+        List<Path> paths = mediaDao.getFiles(directory.toString());
         assertThat(paths.size(), is(1));
         assertThat(paths.get(0), is(path));
     }
@@ -148,39 +148,39 @@ public class PhotoDaoITest {
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsNull() throws IOException {
         Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
-        photoDao.saveFile(null, path);
+        mediaDao.saveFile(null, path);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsEmpty() throws IOException {
         Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
-        photoDao.saveFile("", path);
+        mediaDao.saveFile("", path);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsBlank() throws IOException {
         Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
-        photoDao.saveFile(" ", path);
+        mediaDao.saveFile(" ", path);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveFileThrowsIllegalArgumentExceptionIfFileIsNull() throws IOException {
-        photoDao.saveFile(createTempDirectory("test").toString(), null);
+        mediaDao.saveFile(createTempDirectory("test").toString(), null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsNotADirectory() throws IOException {
         Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
-        photoDao.saveFile(path.toString(), path);
+        mediaDao.saveFile(path.toString(), path);
     }
 
     @Test
     public void testSaveFileCreatesFile() throws IOException {
         createImageInTempDirectory();
-        photoDao.saveFile(destinationDirectory, sourceImagePath);
+        mediaDao.saveFile(destinationDirectory, sourceImagePath);
         assertThat(exists(destinationPath), is(true));
         checkFilesExist(new File(destinationDirectory + separator + "image.jpg").toPath());
     }
@@ -188,21 +188,21 @@ public class PhotoDaoITest {
     @Test
     public void testSaveFileCreatesDirectoriesIfTheyDoNotExist() throws IOException {
         createImageInTempDirectory();
-        photoDao.saveFile(destinationDirectory + separator + "directory", sourceImagePath);
+        mediaDao.saveFile(destinationDirectory + separator + "directory", sourceImagePath);
         assertThat(exists(new File(destinationDirectory + separator + "directory").toPath()), is(true));
     }
 
     @Test
     public void testSaveFileDeletesOldFile() throws IOException {
         createImageInTempDirectory();
-        photoDao.saveFile(destinationDirectory, sourceImagePath);
+        mediaDao.saveFile(destinationDirectory, sourceImagePath);
         assertThat(notExists(sourceImagePath), is(true));
     }
 
     @Test
     public void testSaveFileCreatesNewFileWithTheSameDataAsTheOldFile() throws IOException {
         createImageInTempDirectory();
-        photoDao.saveFile(destinationDirectory, sourceImagePath);
+        mediaDao.saveFile(destinationDirectory, sourceImagePath);
         assertThat(getAttribute(new File(destinationDirectory + separator + "image.jpg").toPath(), "size"), is(getAttribute(staticPath, "size")));
     }
 
@@ -211,7 +211,7 @@ public class PhotoDaoITest {
         createImageInTempDirectory();
         Path preCreatedFile = addFileToDestination("image.jpg");
 
-        photoDao.saveFile(destinationDirectory, sourceImagePath);
+        mediaDao.saveFile(destinationDirectory, sourceImagePath);
 
         checkFilesExist(preCreatedFile, new File(destinationDirectory + separator + "image0.jpg").toPath());
     }
@@ -222,7 +222,7 @@ public class PhotoDaoITest {
         Path preCreatedFile = addFileToDestination("image.jpg");
         Path preCreatedFileIncremented = addFileToDestination("image0.jpg");
 
-        photoDao.saveFile(destinationDirectory, sourceImagePath);
+        mediaDao.saveFile(destinationDirectory, sourceImagePath);
 
         checkFilesExist(preCreatedFile, preCreatedFileIncremented, new File(destinationDirectory + separator + "image1.jpg").toPath());
     }

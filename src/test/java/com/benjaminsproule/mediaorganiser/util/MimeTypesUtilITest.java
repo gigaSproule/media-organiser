@@ -1,4 +1,4 @@
-package com.benjaminsproule.photoorganiser.util;
+package com.benjaminsproule.mediaorganiser.util;
 
 import org.junit.After;
 import org.junit.Before;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static com.benjaminsproule.photoorganiser.util.MimeTypesUtil.*;
+import static com.benjaminsproule.mediaorganiser.util.MimeTypesUtil.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -51,7 +51,7 @@ public class MimeTypesUtilITest {
 
     @Test
     public void testMimeTypesFileCreatedIfItDoesNotExist() throws Exception {
-        if (System.getProperty("os.name").startsWith("Windows")) {
+        if (!MimeTypesUtil.requiresMimeTypesFile()) {
             return;
         }
 
@@ -62,7 +62,7 @@ public class MimeTypesUtilITest {
 
     @Test
     public void testMimeTypesFileUpdatedIfItDoesExist() throws Exception {
-        if (System.getProperty("os.name").startsWith("Windows")) {
+        if (!MimeTypesUtil.requiresMimeTypesFile()) {
             return;
         }
 
@@ -75,7 +75,7 @@ public class MimeTypesUtilITest {
 
     @Test
     public void testMimeTypesFileUpdatedIfItDoesExist_DoesNotDeleteOldLines() throws Exception {
-        if (System.getProperty("os.name").startsWith("Windows")) {
+        if (!MimeTypesUtil.requiresMimeTypesFile()) {
             return;
         }
 
@@ -88,7 +88,7 @@ public class MimeTypesUtilITest {
 
     @Test
     public void testMimeTypesFileUpdatedIfItDoesExist_IgnoresAlreadyExisting() throws Exception {
-        if (System.getProperty("os.name").startsWith("Windows")) {
+        if (!MimeTypesUtil.requiresMimeTypesFile()) {
             return;
         }
 

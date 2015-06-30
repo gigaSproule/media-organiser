@@ -14,7 +14,7 @@ description = """"""
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-mainClassName = "com.benjaminsproule.photoorganiser.Main"
+mainClassName = "com.benjaminsproule.mediaorganiser.Main"
 
 repositories {
     mavenLocal()

@@ -1,4 +1,4 @@
-package com.benjaminsproule.photoorganiser;
+package com.benjaminsproule.mediaorganiser;
 
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;

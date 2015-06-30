@@ -1,4 +1,4 @@
-package com.benjaminsproule.photoorganiser.util;
+package com.benjaminsproule.mediaorganiser.util;
 
 import org.junit.Before;
 import org.junit.Test;

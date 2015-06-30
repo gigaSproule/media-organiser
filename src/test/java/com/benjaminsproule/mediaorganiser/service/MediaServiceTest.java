@@ -1,7 +1,7 @@
-package com.benjaminsproule.photoorganiser.service;
+package com.benjaminsproule.mediaorganiser.service;
 
-import com.benjaminsproule.photoorganiser.dao.PhotoDao;
-import com.benjaminsproule.photoorganiser.domain.DateConstants;
+import com.benjaminsproule.mediaorganiser.dao.MediaDao;
+import com.benjaminsproule.mediaorganiser.domain.DateConstants;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.Property;
 import org.apache.tika.parser.AutoDetectParser;
@@ -35,14 +35,14 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(PhotoService.class)
+@PrepareForTest(MediaService.class)
 @PowerMockIgnore("javax.management.*")
-public class PhotoServiceTest {
+public class MediaServiceTest {
     public static final String EXIF_DATE_TIME_ORIGINAL = "exif:DateTimeOriginal";
     public static final String META_CREATION_DATE = "meta:creation-date";
 
     @Mock
-    private PhotoDao photoDao;
+    private MediaDao mediaDao;
     @Mock
     private Path path;
     @Mock
@@ -55,7 +55,7 @@ public class PhotoServiceTest {
     private AutoDetectParser autoDetectParser;
 
     @InjectMocks
-    private PhotoService photoService;
+    private MediaService mediaService;
 
     @Before
     public void setup() throws Exception {
@@ -69,114 +69,114 @@ public class PhotoServiceTest {
 
     @Test
     public void testOrganiseCallsGetFilesWithInputDirectory() throws Exception {
-        when(photoDao.getFiles(anyString())).thenReturn(singletonList(path));
-        photoService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
-        verify(photoDao).getFiles("inputDirectory");
+        when(mediaDao.getFiles(anyString())).thenReturn(singletonList(path));
+        mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
+        verify(mediaDao).getFiles("inputDirectory");
     }
 
     @Test(expected = NullPointerException.class)
     public void testOrganiseGetsTheMetadataFromTheFileDoesNotHaveMetadataFormat() throws Exception {
-        when(photoDao.getFiles(anyString())).thenReturn(singletonList(path));
+        when(mediaDao.getFiles(anyString())).thenReturn(singletonList(path));
         when(metadata.getDate(any(Property.class))).thenReturn(null);
-        photoService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
+        mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
     }
 
     @Test
     public void testOrganiseGetsTheMetadataFromTheFileIsJpegFormat() throws Exception {
-        when(photoDao.getFiles(anyString())).thenReturn(singletonList(path));
-        photoService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
-        verify(photoDao).saveFile("outputDirectory/2015/01/01", path);
+        when(mediaDao.getFiles(anyString())).thenReturn(singletonList(path));
+        mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
+        verify(mediaDao).saveFile("outputDirectory/2015/01/01", path);
     }
 
     @Test
     public void testOrganiseGetsTheMetadataFromTheFileIfMetadataIsNotExif() throws Exception {
-        when(photoDao.getFiles(anyString())).thenReturn(singletonList(path));
+        when(mediaDao.getFiles(anyString())).thenReturn(singletonList(path));
         when(metadata.getDate(any(Property.class))).thenReturn(null).thenReturn(new Date(1420070400000l));
-        photoService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
-        verify(photoDao).saveFile("outputDirectory/2015/01/01", path);
+        mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
+        verify(mediaDao).saveFile("outputDirectory/2015/01/01", path);
     }
 
     @Test
     public void testOrganisePassesTheOutputDirectoryPathWithTheZonedDateTimeIntoSaveFiles() throws Exception {
-        when(photoDao.getFiles(anyString())).thenReturn(singletonList(path));
-        photoService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
-        verify(photoDao).saveFile("outputDirectory/2015/01/01", path);
+        when(mediaDao.getFiles(anyString())).thenReturn(singletonList(path));
+        mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
+        verify(mediaDao).saveFile("outputDirectory/2015/01/01", path);
     }
 
     @Test
     public void testOrganiseDoesNotCallSaveFileIfNoFilesReturned() throws Exception {
-        when(photoDao.getFiles(anyString())).thenReturn(new ArrayList<>());
-        photoService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
-        verify(photoDao).getFiles("inputDirectory");
-        verify(photoDao, never()).saveFile(anyString(), any(Path.class));
+        when(mediaDao.getFiles(anyString())).thenReturn(new ArrayList<>());
+        mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
+        verify(mediaDao).getFiles("inputDirectory");
+        verify(mediaDao, never()).saveFile(anyString(), any(Path.class));
     }
 
     @Test
     public void testOrganiseCallsSaveFileWithOutputDirectory() throws Exception {
-        when(photoDao.getFiles(anyString())).thenReturn(singletonList(path));
-        photoService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
-        verify(photoDao).saveFile(startsWith("outputDirectory"), eq(path));
+        when(mediaDao.getFiles(anyString())).thenReturn(singletonList(path));
+        mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
+        verify(mediaDao).saveFile(startsWith("outputDirectory"), eq(path));
     }
 
     @Test
     public void testOrganiseCallsSaveFileWithCorrectOutputFormatYYYYMMDD() throws Exception {
-        when(photoDao.getFiles(anyString())).thenReturn(singletonList(path));
-        photoService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
-        verify(photoDao).saveFile("outputDirectory/2015/01/01", path);
+        when(mediaDao.getFiles(anyString())).thenReturn(singletonList(path));
+        mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
+        verify(mediaDao).saveFile("outputDirectory/2015/01/01", path);
     }
 
     @Test
     public void testOrganiseCallsSaveFileWithCorrectOutputFormatYYYYMMMMDD() throws Exception {
-        when(photoDao.getFiles(anyString())).thenReturn(singletonList(path));
-        photoService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MMMM_DD);
-        verify(photoDao).saveFile("outputDirectory/2015/January/01", path);
+        when(mediaDao.getFiles(anyString())).thenReturn(singletonList(path));
+        mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MMMM_DD);
+        verify(mediaDao).saveFile("outputDirectory/2015/January/01", path);
     }
 
     @Test
     public void testOrganiseCallsSaveFileWithCorrectOutputFormatYYYYMMMMMMDD() throws Exception {
-        when(photoDao.getFiles(anyString())).thenReturn(singletonList(path));
-        photoService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_MMMM_DD);
-        verify(photoDao).saveFile("outputDirectory/2015/01 - January/01", path);
+        when(mediaDao.getFiles(anyString())).thenReturn(singletonList(path));
+        mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_MMMM_DD);
+        verify(mediaDao).saveFile("outputDirectory/2015/01 - January/01", path);
     }
 
     @Test
     public void testOrganiseThrowsIoExceptionIfDaoThrowsIoException() throws Exception {
-        when(photoDao.getFiles(anyString())).thenReturn(singletonList(path));
-        doThrow(IOException.class).when(photoDao).saveFile(anyString(), any(Path.class));
+        when(mediaDao.getFiles(anyString())).thenReturn(singletonList(path));
+        doThrow(IOException.class).when(mediaDao).saveFile(anyString(), any(Path.class));
         try {
-            photoService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
+            mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
             fail("IOException should have been thrown");
         } catch (IOException e) {
-            verify(photoDao).saveFile(startsWith("outputDirectory"), eq(path));
+            verify(mediaDao).saveFile(startsWith("outputDirectory"), eq(path));
         }
     }
 
     @Test
     public void testOrganiseTrysToUseTheFileNameIfNoImageMetadata() throws Exception {
-        when(photoDao.getFiles(anyString())).thenReturn(singletonList(path));
+        when(mediaDao.getFiles(anyString())).thenReturn(singletonList(path));
         when(metadata.getDate(any(Property.class))).thenReturn(null);
         when(file.getName()).thenReturn("1");
-        photoService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
-        verify(photoDao).saveFile("outputDirectory/1970/01/01", path);
+        mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
+        verify(mediaDao).saveFile("outputDirectory/1970/01/01", path);
     }
 
     @Test
     public void testOrganiseThrowsNullPointerExceptionWithFileNameWhenZonedDateTimeUnavailable() throws Exception {
         String expectedFileName = separator + "expected" + separator + "file" + separator + "name";
-        when(photoDao.getFiles("inputDirectory")).thenReturn(singletonList(path));
+        when(mediaDao.getFiles("inputDirectory")).thenReturn(singletonList(path));
         when(metadata.getDate(any(Property.class))).thenReturn(null);
         when(file.getName()).thenReturn("name");
         when(file.getAbsolutePath()).thenReturn(expectedFileName);
 
         try {
-            photoService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
+            mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
             fail("NullPointerException should have been thrown");
         } catch (NullPointerException e) {
             assertThat(e.getMessage(), containsString(expectedFileName));
             verify(path).toFile();
             verify(file).getName();
             verify(file).getAbsolutePath();
-            verify(photoDao, never()).saveFile(anyString(), any(Path.class));
+            verify(mediaDao, never()).saveFile(anyString(), any(Path.class));
         }
     }
 }

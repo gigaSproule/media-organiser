@@ -1,4 +1,4 @@
-package com.benjaminsproule.photoorganiser.test;
+package com.benjaminsproule.mediaorganiser.test;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

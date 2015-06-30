@@ -1,7 +1,7 @@
-package com.benjaminsproule.photoorganiser.gui;
+package com.benjaminsproule.mediaorganiser.gui;
 
-import com.benjaminsproule.photoorganiser.domain.DateConstants;
-import com.benjaminsproule.photoorganiser.service.PhotoService;
+import com.benjaminsproule.mediaorganiser.domain.DateConstants;
+import com.benjaminsproule.mediaorganiser.service.MediaService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +20,7 @@ public class MainFrame extends JFrame {
     private ButtonGroup buttonGroup;
 
     public MainFrame() {
-        super("Photo Organiser");
+        super("Media Organiser");
         initUi();
     }
 
@@ -123,9 +123,9 @@ public class MainFrame extends JFrame {
                 return;
             }
 
-            PhotoService photoService = new PhotoService();
+            MediaService mediaService = new MediaService();
             try {
-                photoService.organise(inputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath(), buttonGroup.getSelection().getActionCommand());
+                mediaService.organise(inputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath(), buttonGroup.getSelection().getActionCommand());
             } catch (Exception e) {
                 showMessageDialog(null, e.getLocalizedMessage());
             }

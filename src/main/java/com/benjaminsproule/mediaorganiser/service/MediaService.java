@@ -1,6 +1,6 @@
-package com.benjaminsproule.photoorganiser.service;
+package com.benjaminsproule.mediaorganiser.service;
 
-import com.benjaminsproule.photoorganiser.dao.PhotoDao;
+import com.benjaminsproule.mediaorganiser.dao.MediaDao;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.Property;
@@ -25,17 +25,17 @@ import java.util.List;
 import static java.time.Instant.ofEpochMilli;
 import static org.apache.commons.lang3.Validate.notNull;
 
-public class PhotoService {
+public class MediaService {
     public static final String EXIF_DATE_TIME_ORIGINAL = "exif:DateTimeOriginal";
     public static final String META_CREATION_DATE = "meta:creation-date";
-    private PhotoDao photoDao;
+    private MediaDao mediaDao;
 
-    public PhotoService() {
-        photoDao = new PhotoDao();
+    public MediaService() {
+        mediaDao = new MediaDao();
     }
 
     public void organise(String inputDirectory, String outputDirectory, String outputFormat) throws IOException {
-        List<Path> paths = photoDao.getFiles(inputDirectory);
+        List<Path> paths = mediaDao.getFiles(inputDirectory);
 
         for (Path path : paths) {
             File file = path.toFile();
@@ -57,7 +57,7 @@ public class PhotoService {
             notNull(zonedDateTime, "Could not get the ZonedDateTime from the file %s", file.getAbsolutePath());
 
             DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outputFormat);
-            photoDao.saveFile(outputDirectory + "/" + zonedDateTime.format(outputFormatter), path);
+            mediaDao.saveFile(outputDirectory + "/" + zonedDateTime.format(outputFormatter), path);
         }
     }
 

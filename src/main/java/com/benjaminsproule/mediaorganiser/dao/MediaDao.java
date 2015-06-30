@@ -1,4 +1,4 @@
-package com.benjaminsproule.photoorganiser.dao;
+package com.benjaminsproule.mediaorganiser.dao;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,13 +6,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.benjaminsproule.photoorganiser.util.MimeTypesUtil.*;
+import static com.benjaminsproule.mediaorganiser.util.MimeTypesUtil.*;
 import static java.io.File.separator;
 import static java.nio.file.Files.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.join;
 
-public class PhotoDao {
+public class MediaDao {
 
     public List<Path> getFiles(String inputDirectory) throws IOException {
         if (isBlank(inputDirectory)) {
