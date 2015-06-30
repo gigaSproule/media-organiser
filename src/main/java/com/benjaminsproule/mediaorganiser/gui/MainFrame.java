@@ -2,6 +2,7 @@ package com.benjaminsproule.mediaorganiser.gui;
 
 import com.benjaminsproule.mediaorganiser.domain.DateConstants;
 import com.benjaminsproule.mediaorganiser.service.MediaService;
+import com.benjaminsproule.mediaorganiser.service.Progress;
 
 import javax.swing.*;
 import java.awt.*;
@@ -103,8 +104,9 @@ public class MainFrame extends JFrame {
         jPanel.add(new JLabel());
         jPanel.add(numberTextFormat);
 
-        jPanel.add(new JLabel());
-        jPanel.add(new JLabel());
+        jPanel.add(new JLabel("Files processed"));
+        JLabel progress = new JLabel();
+        jPanel.add(progress);
         JButton organise = new JButton("Organise");
         jPanel.add(organise);
 
@@ -123,15 +125,28 @@ public class MainFrame extends JFrame {
                 return;
             }
 
-            MediaService mediaService = new MediaService();
-            try {
-                mediaService.organise(inputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath(), buttonGroup.getSelection().getActionCommand());
-            } catch (Exception e) {
-                showMessageDialog(null, e.getLocalizedMessage());
-            }
+            new Thread(() -> {
+                MediaService mediaService = new MediaService();
+                try {
+                    mediaService.organise(inputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath(), buttonGroup.getSelection().getActionCommand());
+                } catch (Exception e) {
+                    showMessageDialog(null, e.getLocalizedMessage());
+                }
 
-            showMessageDialog(null, "Organised");
+                showMessageDialog(null, "Organised");
+            }).start();
         });
+
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                progress.setText(Progress.getNumberOfFilesProcessed() + "/" + Progress.getTotalNumberOfFiles());
+            }
+        }).start();
 
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 

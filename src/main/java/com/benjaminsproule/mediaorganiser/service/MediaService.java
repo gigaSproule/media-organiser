@@ -35,7 +35,9 @@ public class MediaService {
     }
 
     public void organise(String inputDirectory, String outputDirectory, String outputFormat) throws IOException {
+        Progress.reset();
         List<Path> paths = mediaDao.getFiles(inputDirectory);
+        Progress.setTotalNumberOfFiles(paths.size());
 
         for (Path path : paths) {
             File file = path.toFile();
@@ -58,6 +60,7 @@ public class MediaService {
 
             DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outputFormat);
             mediaDao.saveFile(outputDirectory + "/" + zonedDateTime.format(outputFormatter), path);
+            Progress.inc();
         }
     }
 
