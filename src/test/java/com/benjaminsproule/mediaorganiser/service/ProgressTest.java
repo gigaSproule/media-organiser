@@ -21,6 +21,7 @@ public class ProgressTest {
 
     @Test
     public void testInc_IncrementsNumberOfFilesProcessed() {
+        Progress.reset();
         Progress.inc();
         assertThat(Progress.getNumberOfFilesProcessed(), is(1));
     }

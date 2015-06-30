@@ -26,8 +26,8 @@ import static java.time.Instant.ofEpochMilli;
 import static org.apache.commons.lang3.Validate.notNull;
 
 public class MediaService {
-    public static final String EXIF_DATE_TIME_ORIGINAL = "exif:DateTimeOriginal";
-    public static final String META_CREATION_DATE = "meta:creation-date";
+    private static final String EXIF_DATE_TIME_ORIGINAL = "exif:DateTimeOriginal";
+    private static final String META_CREATION_DATE = "meta:creation-date";
     private MediaDao mediaDao;
 
     public MediaService() {
@@ -75,10 +75,6 @@ public class MediaService {
         } catch (SAXException | TikaException | IOException e) {
             e.printStackTrace();
         }
-
-//        for (String name : metadata.names()) {
-//            System.out.println(name + ": " + metadata.get(name));
-//        }
 
         Date dateTime = metadata.getDate(Property.get(EXIF_DATE_TIME_ORIGINAL));
         if (dateTime == null) {
