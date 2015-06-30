@@ -25,7 +25,9 @@ repositories {
 dependencies {
     compile 'commons-cli:commons-cli:1.2'
     compile 'org.apache.commons:commons-lang3:3.3.2'
-    compile 'org.apache.tika:tika-core:1.9'
+    compile('org.apache.tika:tika-core:1.9') {
+        exclude group: 'junit'
+    }
     compile 'org.apache.tika:tika-parsers:1.9'
     compile 'org.apache.logging.log4j:log4j-api:2.1'
     compile 'org.apache.logging.log4j:log4j-core:2.1'

@@ -1,6 +1,7 @@
 package com.benjaminsproule.mediaorganiser;
 
 import com.benjaminsproule.mediaorganiser.domain.DateConstants;
+import com.benjaminsproule.mediaorganiser.service.Progress;
 import com.benjaminsproule.mediaorganiser.test.Constants;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -118,5 +119,52 @@ public class MainITest {
 
         Path expectedFile = new File(outputDirectory + separator + "2013" + separator + "10" + separator + "13" + separator + "video.avi").toPath();
         assertThat(exists(expectedFile), is(true));
+    }
+
+    @Test
+    public void testMainSetsTheProgressDetails_oneImage() throws Exception {
+        Path inputDirectoryPath = new File(inputDirectory + separator + "image.jpg").toPath();
+        Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
+        copy(staticPath, inputDirectoryPath);
+
+        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        Main.main(args);
+
+        assertThat(Progress.getNumberOfFilesProcessed(), is(1));
+        assertThat(Progress.getTotalNumberOfFiles(), is(1));
+    }
+
+    @Test
+    public void testMainSetsTheProgressDetails_twoImages() throws Exception {
+        Path inputDirectoryPath = new File(inputDirectory + separator + "image.jpg").toPath();
+        Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
+        copy(staticPath, inputDirectoryPath);
+        inputDirectoryPath = new File(inputDirectory + separator + "1425748958422.jpg").toPath();
+        staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "1425748958422.jpg").toPath();
+        copy(staticPath, inputDirectoryPath);
+
+        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        Main.main(args);
+
+        assertThat(Progress.getNumberOfFilesProcessed(), is(2));
+        assertThat(Progress.getTotalNumberOfFiles(), is(2));
+    }
+
+    @Test
+    public void testMainSetsTheProgressDetails_resetsProgress() throws Exception {
+        Path inputDirectoryPath = new File(inputDirectory + separator + "image.jpg").toPath();
+        Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
+        copy(staticPath, inputDirectoryPath);
+
+        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        Main.main(args);
+
+        assertThat(Progress.getNumberOfFilesProcessed(), is(1));
+        assertThat(Progress.getTotalNumberOfFiles(), is(1));
+
+        Main.main(args);
+
+        assertThat("Counter either not reset or image still in input directory", Progress.getNumberOfFilesProcessed(), is(0));
+        assertThat("Counter either not reset or image still in input directory", Progress.getTotalNumberOfFiles(), is(0));
     }
 }
