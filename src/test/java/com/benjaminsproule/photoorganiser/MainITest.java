@@ -105,4 +105,18 @@ public class MainITest {
         Path expectedFile = new File(outputDirectory + separator + "2014" + separator + "11" + separator + "30" + separator + "20141130_221411.mp4").toPath();
         assertThat(exists(expectedFile), is(true));
     }
+
+    @Ignore // TODO: Find an avi file with a created timestamp
+    @Test
+    public void testMainMovesAviVideoWithVideoMetadataIntoCorrectPlace() throws Exception {
+        Path inputDirectoryPath = new File(inputDirectory + separator + "video.avi").toPath();
+        Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "video.avi").toPath();
+        copy(staticPath, inputDirectoryPath);
+
+        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        Main.main(args);
+
+        Path expectedFile = new File(outputDirectory + separator + "2013" + separator + "10" + separator + "13" + separator + "video.avi").toPath();
+        assertThat(exists(expectedFile), is(true));
+    }
 }

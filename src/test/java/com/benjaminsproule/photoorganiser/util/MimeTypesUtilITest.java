@@ -70,7 +70,7 @@ public class MimeTypesUtilITest {
 
         MimeTypesUtil.createMimeTypesFile();
 
-        assertThat(Files.readAllLines(mimeTypes), hasItems(IMAGES_JPG_MAPPING, IMAGES_TIFF, VIDEOS_MP4));
+        assertThat(Files.readAllLines(mimeTypes), hasItems(IMAGES_JPG_MAPPING, IMAGES_TIFF, VIDEOS_MP4, VIDEOS_AVI));
     }
 
     @Test
@@ -92,11 +92,11 @@ public class MimeTypesUtilITest {
             return;
         }
 
-        populateMimeTypesFile(IMAGES_JPG_MAPPING, IMAGES_TIFF, VIDEOS_MP4);
+        populateMimeTypesFile(IMAGES_JPG_MAPPING, IMAGES_TIFF, VIDEOS_MP4, VIDEOS_AVI);
 
         MimeTypesUtil.createMimeTypesFile();
 
-        assertThat(Files.readAllLines(mimeTypes), containsInAnyOrder(IMAGES_JPG_MAPPING, IMAGES_TIFF, VIDEOS_MP4));
+        assertThat(Files.readAllLines(mimeTypes), containsInAnyOrder(IMAGES_JPG_MAPPING, IMAGES_TIFF, VIDEOS_MP4, VIDEOS_AVI));
     }
 
     private void populateMimeTypesFile(final String... str) throws IOException {

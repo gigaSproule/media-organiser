@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MimeTypesUtil {
 
@@ -12,10 +14,19 @@ public class MimeTypesUtil {
     public static final String IMAGE_JPEG = "image/jpeg";
     public static final String IMAGE_TIFF = "image/tiff";
     public static final String VIDEO_MP4 = "video/mp4";
-
+    public static final String VIDEO_AVI = "video/avi";
     public static final String IMAGES_JPG_MAPPING = IMAGE_JPG + "\tjpg jpeg";
+
     public static final String IMAGES_TIFF = IMAGE_TIFF + "\ttif tiff";
     public static final String VIDEOS_MP4 = VIDEO_MP4 + "\tmp4";
+    public static final String VIDEOS_AVI = VIDEO_AVI + "\tavi";
+
+    private static final Set<String> MIME_TYPES = new HashSet<String>() {{
+        add(IMAGES_JPG_MAPPING);
+        add(IMAGES_TIFF);
+        add(VIDEO_MP4);
+        add(VIDEO_AVI);
+    }};
 
     public static void createMimeTypesFile() throws IOException {
         Path mimeTypes = new File(System.getProperty("user.home") + "/.mime.types").toPath();
@@ -24,17 +35,7 @@ public class MimeTypesUtil {
         }
 
         List<String> lines = Files.readAllLines(mimeTypes);
-        if (!lines.contains(IMAGES_JPG_MAPPING)) {
-            lines.add(IMAGES_JPG_MAPPING);
-        }
-
-        if (!lines.contains(IMAGES_TIFF)) {
-            lines.add(IMAGES_TIFF);
-        }
-
-        if (!lines.contains(VIDEO_MP4)) {
-            lines.add(VIDEOS_MP4);
-        }
+        MIME_TYPES.stream().filter(mimType -> !lines.contains(mimType)).forEach(lines::add);
 
         Files.write(mimeTypes, lines);
     }
