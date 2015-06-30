@@ -24,8 +24,8 @@ public class MimeTypesUtil {
     private static final Set<String> MIME_TYPES = new HashSet<String>() {{
         add(IMAGES_JPG_MAPPING);
         add(IMAGES_TIFF);
-        add(VIDEO_MP4);
-        add(VIDEO_AVI);
+        add(VIDEOS_MP4);
+        add(VIDEOS_AVI);
     }};
 
     public static void createMimeTypesFile() throws IOException {
@@ -35,7 +35,7 @@ public class MimeTypesUtil {
         }
 
         List<String> lines = Files.readAllLines(mimeTypes);
-        MIME_TYPES.stream().filter(mimType -> !lines.contains(mimType)).forEach(lines::add);
+        MIME_TYPES.stream().filter(mimeType -> !lines.contains(mimeType)).forEach(lines::add);
 
         Files.write(mimeTypes, lines);
     }
