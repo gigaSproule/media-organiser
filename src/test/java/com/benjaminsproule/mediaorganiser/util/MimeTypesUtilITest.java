@@ -9,10 +9,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static com.benjaminsproule.mediaorganiser.util.MimeTypesUtil.*;
+import static com.benjaminsproule.mediaorganiser.util.MimeTypesUtil.IMAGES_JPG_MAPPING;
+import static com.benjaminsproule.mediaorganiser.util.MimeTypesUtil.IMAGES_TIFF;
+import static com.benjaminsproule.mediaorganiser.util.MimeTypesUtil.VIDEOS_AVI;
+import static com.benjaminsproule.mediaorganiser.util.MimeTypesUtil.VIDEOS_MP4;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
 
 public class MimeTypesUtilITest {
 

@@ -3,15 +3,22 @@ package com.benjaminsproule.mediaorganiser.gui;
 import com.benjaminsproule.mediaorganiser.domain.DateConstants;
 import com.benjaminsproule.mediaorganiser.service.MediaService;
 import com.benjaminsproule.mediaorganiser.service.Progress;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static javax.swing.JFileChooser.APPROVE_OPTION;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 import static javax.swing.JOptionPane.showMessageDialog;
 
+@Slf4j
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = 1L;
     private JLabel inputDirectoryPathLabel;
@@ -19,9 +26,14 @@ public class MainFrame extends JFrame {
     private JFileChooser inputDirectoryChooser;
     private JFileChooser outputDirectoryChooser;
     private ButtonGroup buttonGroup;
+    private ExecutorService executorService;
+    private MediaService mediaService;
+    private Future organiser;
 
     public MainFrame() {
         super("Media Organiser");
+        executorService = Executors.newFixedThreadPool(2);
+        mediaService = new MediaService();
         initUi();
     }
 
@@ -125,8 +137,7 @@ public class MainFrame extends JFrame {
                 return;
             }
 
-            new Thread(() -> {
-                MediaService mediaService = new MediaService();
+            organiser = executorService.submit(() -> {
                 try {
                     mediaService.organise(inputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath(), buttonGroup.getSelection().getActionCommand());
                 } catch (Exception e) {
@@ -134,19 +145,39 @@ public class MainFrame extends JFrame {
                 }
 
                 showMessageDialog(null, "Organised");
-            }).start();
+            });
         });
 
-        new Thread(() -> {
+        executorService.submit(() -> {
             while (true) {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(100l);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    log.error(e.getLocalizedMessage(), e);
                 }
-                progress.setText(Progress.getNumberOfFilesProcessed() + "/" + Progress.getTotalNumberOfFiles());
+                String text = Progress.getNumberOfFilesProcessed() + "/" + Progress.getTotalNumberOfFiles();
+                if (Progress.getTotalNumberOfFiles() > 0) {
+                    double decimalTotal = (double) Progress.getNumberOfFilesProcessed() / Progress.getTotalNumberOfFiles();
+                    text += " (" + (decimalTotal * 100) + "%)";
+                } else {
+                    text += " (0%)";
+                }
+                progress.setText(text);
             }
-        }).start();
+        });
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                if (organiser != null && !organiser.isDone()) {
+                    showMessageDialog(null, "Still processing");
+                    return;
+                }
+
+                executorService.shutdown();
+                System.exit(0);
+            }
+        });
 
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
