@@ -46,6 +46,7 @@ dependencies {
     testCompile('org.powermock:powermock-api-mockito:1.6.1') {
         exclude group: 'org.mockito'
     }
+    testCompile 'com.jayway.awaitility:awaitility:1.7.0'
     testCompile('junit:junit:4.12') {
         exclude group: 'org.hamcrest'
     }

@@ -10,6 +10,8 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -137,21 +139,32 @@ public class MainFrame extends JFrame {
                 return;
             }
 
+            List<String> errors = new ArrayList<>();
             organiser = executorService.submit(() -> {
                 try {
-                    mediaService.organise(inputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath(), buttonGroup.getSelection().getActionCommand());
+                    organise.setEnabled(false);
+                    errors.addAll(mediaService.organise(inputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath(), buttonGroup.getSelection().getActionCommand()));
                 } catch (Exception e) {
                     showMessageDialog(null, e.getLocalizedMessage());
                 }
 
-                showMessageDialog(null, "Organised");
+                organise.setEnabled(true);
+                if (errors.isEmpty()) {
+                    showMessageDialog(null, "Organised");
+                } else {
+                    String errorString = "";
+                    for (String error : errors) {
+                        errorString += "\n" + error;
+                    }
+                    showMessageDialog(null, "Organised with the following errors:" + errorString);
+                }
             });
         });
 
         executorService.submit(() -> {
             while (true) {
                 try {
-                    Thread.sleep(100l);
+                    Thread.sleep(100L);
                 } catch (InterruptedException e) {
                     log.error(e.getLocalizedMessage(), e);
                 }
