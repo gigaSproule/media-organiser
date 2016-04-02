@@ -12,27 +12,29 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Main.class, MimeTypesUtil.class})
-@PowerMockIgnore("org.apache.logging.log4j.core.jmx.*")
+@PowerMockIgnore("javax.management.*")
 public class MainTest {
     @Mock
     private MediaService mediaService;
 
     @Before
     public void setup() throws Exception {
+        initMocks(this);
         mockStatic(MimeTypesUtil.class);
+        when(MimeTypesUtil.requiresMimeTypesFile()).thenReturn(false);
 
         whenNew(MediaService.class).withNoArguments().thenReturn(mediaService);
-        doNothing().when(mediaService).organise(anyString(), anyString(), anyString());
-
-        when(MimeTypesUtil.requiresMimeTypesFile()).thenReturn(false);
+        when(mediaService.organise(anyString(), anyString(), anyString())).thenReturn(emptyList());
     }
 
     @Test
