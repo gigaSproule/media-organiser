@@ -30,7 +30,7 @@ public class MainFrame extends JFrame {
     private ButtonGroup buttonGroup;
     private ExecutorService executorService;
     private MediaService mediaService;
-    private Future organiser;
+    private Future<?> organiser;
 
     public MainFrame() {
         super("Media Organiser");

@@ -21,12 +21,14 @@ public class MimeTypesUtil {
     public static final String VIDEOS_MP4 = VIDEO_MP4 + "\tmp4";
     public static final String VIDEOS_AVI = VIDEO_AVI + "\tavi";
 
-    private static final Set<String> MIME_TYPES = new HashSet<String>() {{
-        add(IMAGES_JPG_MAPPING);
-        add(IMAGES_TIFF);
-        add(VIDEOS_MP4);
-        add(VIDEOS_AVI);
-    }};
+    private static final Set<String> MIME_TYPES = new HashSet<String>();
+
+    static {
+        MIME_TYPES.add(IMAGES_JPG_MAPPING);
+        MIME_TYPES.add(IMAGES_TIFF);
+        MIME_TYPES.add(VIDEOS_MP4);
+        MIME_TYPES.add(VIDEOS_AVI);
+    }
 
     public static void createMimeTypesFile() throws IOException {
         Path mimeTypes = new File(System.getProperty("user.home") + "/.mime.types").toPath();
