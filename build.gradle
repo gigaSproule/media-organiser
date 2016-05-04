@@ -1,18 +1,48 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+}
+
 plugins {
-    id "us.kirchmeier.capsule" version "1.0-rc1"
+    id "us.kirchmeier.capsule" version "0.10.0"
 }
 
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'application'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+eclipse {
+    classpath {
+       downloadSources = true
+       downloadJavadoc = true
+    }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 group = 'com.benjaminsproule'
 version = '1.0-SNAPSHOT'
 
 description = """"""
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 mainClassName = "com.benjaminsproule.mediaorganiser.Main"
 
@@ -51,10 +81,6 @@ dependencies {
         exclude group: 'org.hamcrest'
     }
 }
-
-//task wrapper(type: Wrapper) {
-//    gradleVersion = '2.4'
-//}
 
 task fatCapsule(type: FatCapsule) {
     applicationClass mainClassName
