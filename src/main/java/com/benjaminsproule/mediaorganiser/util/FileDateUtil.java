@@ -29,6 +29,16 @@ public class FileDateUtil {
     public static final String EXIF_DATE_TIME_ORIGINAL = "exif:DateTimeOriginal";
     public static final String META_CREATION_DATE = "meta:creation-date";
 
+    /**
+     * Get the date from the given file, from the metadata of the file if it
+     * exists, the name if there isn't any metadata or null if it can't find
+     * one.
+     * 
+     * @param file
+     *            the file to extract the date from
+     * @return the {@link ZonedDateTime} of the file
+     * @throws InvalidDateException
+     */
     public static ZonedDateTime getDateFromFile(File file) throws InvalidDateException {
         Metadata metadata = new Metadata();
 

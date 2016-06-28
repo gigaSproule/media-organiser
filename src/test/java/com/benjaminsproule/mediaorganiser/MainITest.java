@@ -1,7 +1,7 @@
 package com.benjaminsproule.mediaorganiser;
 
 import com.benjaminsproule.mediaorganiser.domain.DateConstants;
-import com.benjaminsproule.mediaorganiser.service.Progress;
+import com.benjaminsproule.mediaorganiser.domain.Progress;
 import com.benjaminsproule.mediaorganiser.test.Constants;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -34,10 +34,12 @@ public class MainITest {
         Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
         copy(staticPath, inputDirectoryPath);
 
-        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        String[] args = new String[] { "-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD };
         Main.main(args);
 
-        Path expectedFile = new File(outputDirectory + separator + "2015" + separator + "02" + separator + "15" + separator + "image.jpg").toPath();
+        Path expectedFile = new File(
+                outputDirectory + separator + "2015" + separator + "02" + separator + "15" + separator + "image.jpg")
+                        .toPath();
         assertThat(exists(expectedFile), is(true));
     }
 
@@ -47,10 +49,12 @@ public class MainITest {
         Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
         copy(staticPath, inputDirectoryPath);
 
-        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MMMM_DD};
+        String[] args = new String[] { "-id", inputDirectory, "-od", outputDirectory, "-of",
+                DateConstants.YYYY_MMMM_DD };
         Main.main(args);
 
-        Path expectedFile = new File(outputDirectory + separator + "2015" + separator + "February" + separator + "15" + separator + "image.jpg").toPath();
+        Path expectedFile = new File(outputDirectory + separator + "2015" + separator + "February" + separator + "15"
+                + separator + "image.jpg").toPath();
         assertThat(exists(expectedFile), is(true));
     }
 
@@ -60,10 +64,12 @@ public class MainITest {
         Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
         copy(staticPath, inputDirectoryPath);
 
-        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_MMMM_DD};
+        String[] args = new String[] { "-id", inputDirectory, "-od", outputDirectory, "-of",
+                DateConstants.YYYY_MM_MMMM_DD };
         Main.main(args);
 
-        Path expectedFile = new File(outputDirectory + separator + "2015" + separator + "02 - February" + separator + "15" + separator + "image.jpg").toPath();
+        Path expectedFile = new File(outputDirectory + separator + "2015" + separator + "02 - February" + separator
+                + "15" + separator + "image.jpg").toPath();
         assertThat(exists(expectedFile), is(true));
     }
 
@@ -73,10 +79,11 @@ public class MainITest {
         Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "1425748958422.jpg").toPath();
         copy(staticPath, inputDirectoryPath);
 
-        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        String[] args = new String[] { "-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD };
         Main.main(args);
 
-        Path expectedFile = new File(outputDirectory + separator + "2015" + separator + "03" + separator + "07" + separator + "1425748958422.jpg").toPath();
+        Path expectedFile = new File(outputDirectory + separator + "2015" + separator + "03" + separator + "07"
+                + separator + "1425748958422.jpg").toPath();
         assertThat(exists(expectedFile), is(true));
     }
 
@@ -87,10 +94,12 @@ public class MainITest {
         Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "image.tif").toPath();
         copy(staticPath, inputDirectoryPath);
 
-        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        String[] args = new String[] { "-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD };
         Main.main(args);
 
-        Path expectedFile = new File(outputDirectory + separator + "2012" + separator + "09" + separator + "07" + separator + "image.tif").toPath();
+        Path expectedFile = new File(
+                outputDirectory + separator + "2012" + separator + "09" + separator + "07" + separator + "image.tif")
+                        .toPath();
         assertThat(exists(expectedFile), is(true));
     }
 
@@ -100,10 +109,12 @@ public class MainITest {
         Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "video.mp4").toPath();
         copy(staticPath, inputDirectoryPath);
 
-        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        String[] args = new String[] { "-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD };
         Main.main(args);
 
-        Path expectedFile = new File(outputDirectory + separator + "2014" + separator + "11" + separator + "30" + separator + "video.mp4").toPath();
+        Path expectedFile = new File(
+                outputDirectory + separator + "2014" + separator + "11" + separator + "30" + separator + "video.mp4")
+                        .toPath();
         assertThat(exists(expectedFile), is(true));
     }
 
@@ -114,10 +125,12 @@ public class MainITest {
         Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "video.avi").toPath();
         copy(staticPath, inputDirectoryPath);
 
-        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        String[] args = new String[] { "-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD };
         Main.main(args);
 
-        Path expectedFile = new File(outputDirectory + separator + "2013" + separator + "10" + separator + "13" + separator + "video.avi").toPath();
+        Path expectedFile = new File(
+                outputDirectory + separator + "2013" + separator + "10" + separator + "13" + separator + "video.avi")
+                        .toPath();
         assertThat(exists(expectedFile), is(true));
     }
 
@@ -127,7 +140,7 @@ public class MainITest {
         Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
         copy(staticPath, inputDirectoryPath);
 
-        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        String[] args = new String[] { "-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD };
         Main.main(args);
 
         assertThat(Progress.getNumberOfFilesProcessed(), is(1));
@@ -143,7 +156,7 @@ public class MainITest {
         staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "1425748958422.jpg").toPath();
         copy(staticPath, inputDirectoryPath);
 
-        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        String[] args = new String[] { "-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD };
         Main.main(args);
 
         assertThat(Progress.getNumberOfFilesProcessed(), is(2));
@@ -156,7 +169,7 @@ public class MainITest {
         Path staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
         copy(staticPath, inputDirectoryPath);
 
-        String[] args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+        String[] args = new String[] { "-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD };
         Main.main(args);
 
         assertThat(Progress.getNumberOfFilesProcessed(), is(1));
@@ -164,7 +177,9 @@ public class MainITest {
 
         Main.main(args);
 
-        assertThat("Counter either not reset or image still in input directory", Progress.getNumberOfFilesProcessed(), is(0));
-        assertThat("Counter either not reset or image still in input directory", Progress.getTotalNumberOfFiles(), is(0));
+        assertThat("Counter either not reset or image still in input directory", Progress.getNumberOfFilesProcessed(),
+                is(0));
+        assertThat("Counter either not reset or image still in input directory", Progress.getTotalNumberOfFiles(),
+                is(0));
     }
 }

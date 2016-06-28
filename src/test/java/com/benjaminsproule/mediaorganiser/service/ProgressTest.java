@@ -2,6 +2,8 @@ package com.benjaminsproule.mediaorganiser.service;
 
 import org.junit.Test;
 
+import com.benjaminsproule.mediaorganiser.domain.Progress;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -25,5 +27,4 @@ public class ProgressTest {
         Progress.inc();
         assertThat(Progress.getNumberOfFilesProcessed(), is(1));
     }
-
 }

@@ -23,8 +23,8 @@ public class Test {
     private static final String EXIF_DATE_TIME_ORIGINAL = "exif:DateTimeOriginal";
     private static final String META_CREATION_DATE = "meta:creation-date";
 
-    private static final String RESOURCES_DIRECTORY = System.getProperty("user.dir") + separator +
-        "src" + separator + "test" + separator + "resources";
+    private static final String RESOURCES_DIRECTORY = System.getProperty("user.dir") + separator + "src" + separator
+            + "test" + separator + "resources";
 
     @org.junit.Test
     public void test() throws IOException {

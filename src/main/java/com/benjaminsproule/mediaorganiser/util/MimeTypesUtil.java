@@ -30,6 +30,12 @@ public class MimeTypesUtil {
         MIME_TYPES.add(VIDEOS_AVI);
     }
 
+    /**
+     * Creates a mime types file in the home directory if it doesn't already
+     * exist, containing the required mime types for this application
+     * 
+     * @throws IOException
+     */
     public static void createMimeTypesFile() throws IOException {
         Path mimeTypes = new File(System.getProperty("user.home") + "/.mime.types").toPath();
         if (!Files.exists(mimeTypes)) {
@@ -42,6 +48,11 @@ public class MimeTypesUtil {
         Files.write(mimeTypes, lines);
     }
 
+    /**
+     * Return whether the system requires a mime types file.
+     * 
+     * @return true if the system is Mac OS X or Linux, false if it's not
+     */
     public static boolean requiresMimeTypesFile() {
         String osName = System.getProperty("os.name").toLowerCase();
         return osName.contains("mac") || osName.contains("linux");

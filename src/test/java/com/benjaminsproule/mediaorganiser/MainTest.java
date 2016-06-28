@@ -21,7 +21,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Main.class, MimeTypesUtil.class})
+@PrepareForTest({ Main.class, MimeTypesUtil.class })
 @PowerMockIgnore("javax.management.*")
 public class MainTest {
     @Mock
@@ -39,7 +39,8 @@ public class MainTest {
 
     @Test
     public void testMainDoesNotCallCreateMimeTypesFileIfRequiresMimeTypesFileFalse() throws Exception {
-        String[] args = new String[]{"-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH, "-of", DateConstants.YYYY_MM_DD};
+        String[] args = new String[] { "-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH, "-of",
+                DateConstants.YYYY_MM_DD };
         Main.main(args);
 
         verifyStatic();
@@ -52,7 +53,8 @@ public class MainTest {
     public void testMainCallsCreateMimeTypesFileIfRequiresMimeTypesFileTrue() throws Exception {
         when(MimeTypesUtil.requiresMimeTypesFile()).thenReturn(true);
 
-        String[] args = new String[]{"-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH, "-of", DateConstants.YYYY_MM_DD};
+        String[] args = new String[] { "-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH, "-of",
+                DateConstants.YYYY_MM_DD };
         Main.main(args);
 
         verifyStatic();
@@ -62,7 +64,7 @@ public class MainTest {
 
     @Test
     public void testMainThrowsIllegalArgumentExceptionWhenInputFileArgumentMissing() throws Exception {
-        String[] args = new String[]{"-od", Constants.DESTINATION_PATH, "-of", DateConstants.YYYY_MM_DD};
+        String[] args = new String[] { "-od", Constants.DESTINATION_PATH, "-of", DateConstants.YYYY_MM_DD };
         try {
             Main.main(args);
             fail("IllegalArgumentException should have been thrown");
@@ -73,7 +75,7 @@ public class MainTest {
 
     @Test
     public void testMainThrowsIllegalArgumentExceptionWhenDESTINATION_PATHArgumentMissing() throws Exception {
-        String[] args = new String[]{"-id", Constants.SOURCE_PATH, "-of", DateConstants.YYYY_MM_DD};
+        String[] args = new String[] { "-id", Constants.SOURCE_PATH, "-of", DateConstants.YYYY_MM_DD };
         try {
             Main.main(args);
             fail("IllegalArgumentException should have been thrown");
@@ -84,7 +86,7 @@ public class MainTest {
 
     @Test
     public void testMainThrowsIllegalArgumentExceptionWhenOutputFormatArgumentMissing() throws Exception {
-        String[] args = new String[]{"-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH};
+        String[] args = new String[] { "-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH };
         try {
             Main.main(args);
             fail("IllegalArgumentException should have been thrown");
@@ -95,7 +97,8 @@ public class MainTest {
 
     @Test
     public void testMainDoesNotThrowIllegalArgumentExceptionWhenArgumentsPassed() throws Exception {
-        String[] args = new String[]{"-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH, "-of", DateConstants.YYYY_MM_DD};
+        String[] args = new String[] { "-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH, "-of",
+                DateConstants.YYYY_MM_DD };
         Main.main(args);
         verify(mediaService).organise(anyString(), anyString(), anyString());
     }

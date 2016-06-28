@@ -203,7 +203,8 @@ public class MediaDaoITest {
     public void testSaveFileCreatesNewFileWithTheSameDataAsTheOldFile() throws IOException {
         createImageInTempDirectory();
         mediaDao.saveFile(destinationDirectory, sourceImagePath);
-        assertThat(getAttribute(new File(destinationDirectory + separator + "image.jpg").toPath(), "size"), is(getAttribute(staticPath, "size")));
+        assertThat(getAttribute(new File(destinationDirectory + separator + "image.jpg").toPath(), "size"),
+                is(getAttribute(staticPath, "size")));
     }
 
     @Test
@@ -224,7 +225,8 @@ public class MediaDaoITest {
 
         mediaDao.saveFile(destinationDirectory, sourceImagePath);
 
-        checkFilesExist(preCreatedFile, preCreatedFileIncremented, new File(destinationDirectory + separator + "image1.jpg").toPath());
+        checkFilesExist(preCreatedFile, preCreatedFileIncremented,
+                new File(destinationDirectory + separator + "image1.jpg").toPath());
     }
 
     private Path addFileToDestination(String fileName) throws IOException {
@@ -242,7 +244,8 @@ public class MediaDaoITest {
 
     private void createImageInTempDirectory() throws IOException {
         staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
-        sourceImagePath = new File(Files.createTempDirectory(Constants.SOURCE_PATH).toString() + separator + "image.jpg").toPath();
+        sourceImagePath = new File(
+                Files.createTempDirectory(Constants.SOURCE_PATH).toString() + separator + "image.jpg").toPath();
         destinationPath = Files.createTempDirectory(Constants.DESTINATION_PATH);
         destinationDirectory = destinationPath.toString();
         copy(staticPath, sourceImagePath);

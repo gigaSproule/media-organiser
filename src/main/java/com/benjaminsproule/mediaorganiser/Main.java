@@ -26,18 +26,21 @@ public class Main {
             Options options = new Options();
             options.addOption("id", "inputdirectory", true, "The directory that contains the media to organise");
             options.addOption("od", "outputdirectory", true, "The directory to put the organised media");
-            options.addOption("of", "outputformat", true, "The format the output directory should use to put the organised media");
+            options.addOption("of", "outputformat", true,
+                    "The format the output directory should use to put the organised media");
             CommandLineParser parser = new GnuParser();
             CommandLine cmd = parser.parse(options, args);
             String inputDirectory = cmd.getOptionValue("inputdirectory");
 
             if (isBlank(inputDirectory)) {
-                throw new IllegalArgumentException("Please provide the directory that contains the media using the -id argument");
+                throw new IllegalArgumentException(
+                        "Please provide the directory that contains the media using the -id argument");
             }
 
             String outputDirectory = cmd.getOptionValue("outputdirectory");
             if (isBlank(outputDirectory)) {
-                throw new IllegalArgumentException("Please provide the output directory to put the organised media using the -od argument");
+                throw new IllegalArgumentException(
+                        "Please provide the output directory to put the organised media using the -od argument");
             }
 
             String outputFormat = cmd.getOptionValue("outputformat");

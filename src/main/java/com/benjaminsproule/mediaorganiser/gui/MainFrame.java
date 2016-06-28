@@ -1,8 +1,9 @@
 package com.benjaminsproule.mediaorganiser.gui;
 
 import com.benjaminsproule.mediaorganiser.domain.DateConstants;
+import com.benjaminsproule.mediaorganiser.domain.Progress;
 import com.benjaminsproule.mediaorganiser.service.MediaService;
-import com.benjaminsproule.mediaorganiser.service.Progress;
+
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -10,6 +11,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -23,6 +25,8 @@ import static javax.swing.JOptionPane.showMessageDialog;
 @Slf4j
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = 1L;
+    private static final DecimalFormat decimalFormat = new DecimalFormat("#.00");
+
     private JLabel inputDirectoryPathLabel;
     private JLabel outputDirectoryPathLabel;
     private JFileChooser inputDirectoryChooser;
@@ -82,8 +86,7 @@ public class MainFrame extends JFrame {
         jPanel.add(outputDirectoryButton);
 
         outputDirectoryButton.addActionListener(event -> {
-            int returnVal = outputDirectoryChooser
-                .showSaveDialog(MainFrame.this);
+            int returnVal = outputDirectoryChooser.showSaveDialog(MainFrame.this);
 
             if (returnVal == APPROVE_OPTION) {
                 File file = outputDirectoryChooser.getSelectedFile();
@@ -143,7 +146,11 @@ public class MainFrame extends JFrame {
             organiser = executorService.submit(() -> {
                 try {
                     organise.setEnabled(false);
-                    errors.addAll(mediaService.organise(inputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath(), buttonGroup.getSelection().getActionCommand()));
+                    String format = buttonGroup.getSelection().getActionCommand();
+
+                    List<String> errorMessages = mediaService.organise(inputDirectory.getAbsolutePath(),
+                            outputDirectory.getAbsolutePath(), format);
+                    errors.addAll(errorMessages);
                 } catch (Exception e) {
                     showMessageDialog(null, e.getLocalizedMessage());
                 }
@@ -170,8 +177,8 @@ public class MainFrame extends JFrame {
                 }
                 String text = Progress.getNumberOfFilesProcessed() + "/" + Progress.getTotalNumberOfFiles();
                 if (Progress.getTotalNumberOfFiles() > 0) {
-                    double decimalTotal = (double) Progress.getNumberOfFilesProcessed() / Progress.getTotalNumberOfFiles();
-                    text += " (" + (decimalTotal * 100) + "%)";
+                    double decimalTotal = Progress.getNumberOfFilesProcessed() / Progress.getTotalNumberOfFiles();
+                    text += " (" + (decimalFormat.format(decimalTotal * 100)) + "%)";
                 } else {
                     text += " (0%)";
                 }

@@ -66,9 +66,8 @@ public class FileDateUtilTest {
 
     @Test
     public void testGetDateFromFile_UsesImageMetadata_MetaCreationDate() throws Exception {
-        when(metadata.getDate(Property.get(EXIF_DATE_TIME_ORIGINAL)))
-            .thenReturn(null)
-            .thenReturn(new Date(1420070400000L));
+        when(metadata.getDate(Property.get(EXIF_DATE_TIME_ORIGINAL))).thenReturn(null)
+                .thenReturn(new Date(1420070400000L));
 
         ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);
 
@@ -120,7 +119,8 @@ public class FileDateUtilTest {
     }
 
     @Test
-    public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata_FileNameImgUnderscoreDateUnderscoreTime() throws Exception {
+    public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata_FileNameImgUnderscoreDateUnderscoreTime()
+            throws Exception {
         when(file.getName()).thenReturn("IMG_19700101_010101");
         when(metadata.getDate(any(Property.class))).thenReturn(null);
 

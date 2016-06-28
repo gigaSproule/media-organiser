@@ -2,6 +2,7 @@ package com.benjaminsproule.mediaorganiser.service;
 
 import com.benjaminsproule.mediaorganiser.dao.MediaDao;
 import com.benjaminsproule.mediaorganiser.domain.DateConstants;
+import com.benjaminsproule.mediaorganiser.domain.Progress;
 import com.benjaminsproule.mediaorganiser.util.FileDateUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +55,8 @@ public class MediaServiceTest {
     public void setup() throws Exception {
         initMocks(this);
         mockStatic(FileDateUtil.class);
-        when(FileDateUtil.getDateFromFile(any(File.class))).thenReturn(ZonedDateTime.ofInstant(Instant.ofEpochMilli(1420070400000L), ZoneId.of("UTC")));
+        when(FileDateUtil.getDateFromFile(any(File.class)))
+                .thenReturn(ZonedDateTime.ofInstant(Instant.ofEpochMilli(1420070400000L), ZoneId.of("UTC")));
         when(path.toFile()).thenReturn(file);
     }
 
@@ -106,8 +108,8 @@ public class MediaServiceTest {
         when(mediaDao.getFiles(anyString())).thenReturn(singletonList(path));
         doThrow(new IOException("IOException that was thrown")).when(mediaDao).saveFile(anyString(), any(Path.class));
         List<String> errors = mediaService.organise("inputDirectory", "outputDirectory", DateConstants.YYYY_MM_DD);
-        await().atMost(5, SECONDS).until(() ->
-            Progress.getNumberOfFilesProcessed() == Progress.getTotalNumberOfFiles());
+        await().atMost(5, SECONDS)
+                .until(() -> Progress.getNumberOfFilesProcessed() == Progress.getTotalNumberOfFiles());
 
         assertThat(errors, hasSize(1));
         assertThat(errors.get(0), is("IOException that was thrown"));

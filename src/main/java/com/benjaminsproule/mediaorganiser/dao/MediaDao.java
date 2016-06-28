@@ -14,6 +14,14 @@ import static org.apache.commons.lang3.StringUtils.join;
 
 public class MediaDao {
 
+    /**
+     * Get the files from the given inputDirectory
+     * 
+     * @param inputDirectory
+     *            the directory to get the media files from
+     * @return a list of {@link Path}s of the media files
+     * @throws IOException
+     */
     public List<Path> getFiles(String inputDirectory) throws IOException {
         if (isBlank(inputDirectory)) {
             throw new IllegalArgumentException("An input directory should be provided");
@@ -44,12 +52,9 @@ public class MediaDao {
             }
 
             String contentType = probeContentType(path);
-            if (contentType != null &&
-                (contentType.equalsIgnoreCase(IMAGE_JPG) ||
-                    contentType.equalsIgnoreCase(IMAGE_JPEG) ||
-                    contentType.equalsIgnoreCase(IMAGE_TIFF) ||
-                    contentType.equalsIgnoreCase(VIDEO_MP4) ||
-                    contentType.equalsIgnoreCase(VIDEO_AVI))) {
+            if (contentType != null && (contentType.equalsIgnoreCase(IMAGE_JPG)
+                    || contentType.equalsIgnoreCase(IMAGE_JPEG) || contentType.equalsIgnoreCase(IMAGE_TIFF)
+                    || contentType.equalsIgnoreCase(VIDEO_MP4) || contentType.equalsIgnoreCase(VIDEO_AVI))) {
                 images.add(path);
             }
         }
