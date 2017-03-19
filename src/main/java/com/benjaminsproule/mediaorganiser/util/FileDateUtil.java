@@ -33,7 +33,7 @@ public class FileDateUtil {
      * Get the date from the given file, from the metadata of the file if it
      * exists, the name if there isn't any metadata or null if it can't find
      * one.
-     * 
+     *
      * @param file
      *            the file to extract the date from
      * @return the {@link ZonedDateTime} of the file
@@ -74,6 +74,14 @@ public class FileDateUtil {
             zonedDateTime = getDateByImgUnderscoreDateUnderscoreTime(fileName);
         }
 
+        if (zonedDateTime == null) {
+            zonedDateTime = getDateByDateHyphenatedUnderscoreTimeHyphenated(fileName);
+        }
+
+        if (zonedDateTime == null) {
+            zonedDateTime = getDateByScreenshotUnderscoreDateHyphenatedTimeHyphenated(fileName);
+        }
+
         return zonedDateTime;
     }
 
@@ -101,6 +109,26 @@ public class FileDateUtil {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssZ");
             return ZonedDateTime.parse(fileName.substring(4) + "+0000", dateTimeFormatter);
+        } catch (DateTimeParseException e) {
+            log.info(e.getLocalizedMessage(), e);
+            return null;
+        }
+    }
+
+    private static ZonedDateTime getDateByDateHyphenatedUnderscoreTimeHyphenated(String fileName) {
+        try {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ssZ");
+            return ZonedDateTime.parse(fileName + "+0000", dateTimeFormatter);
+        } catch (DateTimeParseException e) {
+            log.info(e.getLocalizedMessage(), e);
+            return null;
+        }
+    }
+
+    private static ZonedDateTime getDateByScreenshotUnderscoreDateHyphenatedTimeHyphenated(String fileName) {
+        try {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ssZ");
+            return ZonedDateTime.parse(fileName.substring(11) + "+0000", dateTimeFormatter);
         } catch (DateTimeParseException e) {
             log.info(e.getLocalizedMessage(), e);
             return null;

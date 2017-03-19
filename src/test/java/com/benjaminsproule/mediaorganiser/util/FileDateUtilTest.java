@@ -21,7 +21,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
@@ -122,6 +124,44 @@ public class FileDateUtilTest {
     public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata_FileNameImgUnderscoreDateUnderscoreTime()
             throws Exception {
         when(file.getName()).thenReturn("IMG_19700101_010101");
+        when(metadata.getDate(any(Property.class))).thenReturn(null);
+
+        ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);
+
+        verify(metadata, times(2)).getDate(any(Property.class));
+
+        assertThat(zonedDateTime.getYear(), is(1970));
+        assertThat(zonedDateTime.getMonthValue(), is(1));
+        assertThat(zonedDateTime.getDayOfMonth(), is(1));
+        assertThat(zonedDateTime.getHour(), is(1));
+        assertThat(zonedDateTime.getMinute(), is(1));
+        assertThat(zonedDateTime.getSecond(), is(1));
+        assertThat(zonedDateTime.getNano(), is(0));
+    }
+
+    @Test
+    public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata_FileNameDateHyphenatedUnderscoreTimeHyphenated()
+        throws Exception {
+        when(file.getName()).thenReturn("1970-01-01_01-01-01");
+        when(metadata.getDate(any(Property.class))).thenReturn(null);
+
+        ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);
+
+        verify(metadata, times(2)).getDate(any(Property.class));
+
+        assertThat(zonedDateTime.getYear(), is(1970));
+        assertThat(zonedDateTime.getMonthValue(), is(1));
+        assertThat(zonedDateTime.getDayOfMonth(), is(1));
+        assertThat(zonedDateTime.getHour(), is(1));
+        assertThat(zonedDateTime.getMinute(), is(1));
+        assertThat(zonedDateTime.getSecond(), is(1));
+        assertThat(zonedDateTime.getNano(), is(0));
+    }
+
+    @Test
+    public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata_FileNameScreenshotUnderscoreDateHyphenatedTimeHyphenated()
+        throws Exception {
+        when(file.getName()).thenReturn("Screenshot_1970-01-01_01-01-01");
         when(metadata.getDate(any(Property.class))).thenReturn(null);
 
         ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);
