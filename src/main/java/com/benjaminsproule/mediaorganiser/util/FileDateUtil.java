@@ -1,21 +1,15 @@
 package com.benjaminsproule.mediaorganiser.util;
 
 import com.benjaminsproule.mediaorganiser.exception.InvalidDateException;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.mp4.media.Mp4MetaDirectory;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.metadata.Property;
-import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.Parser;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -26,45 +20,39 @@ import static java.time.Instant.ofEpochMilli;
 
 @Slf4j
 public class FileDateUtil {
-    public static final String EXIF_DATE_TIME_ORIGINAL = "exif:DateTimeOriginal";
-    public static final String META_CREATION_DATE = "meta:creation-date";
 
     /**
      * Get the date from the given file, from the metadata of the file if it
      * exists, the name if there isn't any metadata or null if it can't find
      * one.
      *
-     * @param file
-     *            the file to extract the date from
+     * @param file the file to extract the date from
      * @return the {@link ZonedDateTime} of the file
-     * @throws InvalidDateException
      */
     public static ZonedDateTime getDateFromFile(File file) throws InvalidDateException {
-        Metadata metadata = new Metadata();
-
-        try (InputStream input = new FileInputStream(file)) {
-            ContentHandler handler = new DefaultHandler();
-            Parser parser = new AutoDetectParser();
-            ParseContext parseCtx = new ParseContext();
-            parser.parse(input, handler, metadata, parseCtx);
-        } catch (SAXException | TikaException | IOException e) {
+        try {
+            Metadata metadata = ImageMetadataReader.readMetadata(file);
+            Date dateTime = null;
+            ExifSubIFDDirectory exifSubIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+            if (exifSubIFDDirectory != null) {
+                dateTime = exifSubIFDDirectory.getDateOriginal();
+                if (dateTime != null) {
+                    return ZonedDateTime.ofInstant(dateTime.toInstant(), ZoneId.of("UTC"));
+                }
+            }
+            Mp4MetaDirectory mp4MetaDirectory = metadata.getFirstDirectoryOfType(Mp4MetaDirectory.class);
+            if (mp4MetaDirectory != null) {
+                dateTime = mp4MetaDirectory.getDate(Mp4MetaDirectory.TAG_CREATION_TIME);
+            }
+            if (dateTime != null) {
+                return ZonedDateTime.ofInstant(dateTime.toInstant(), ZoneId.of("UTC"));
+            }
+        } catch (ImageProcessingException | IOException e) {
             log.error(e.getLocalizedMessage(), e);
         }
 
-        Date dateTime = metadata.getDate(Property.get(EXIF_DATE_TIME_ORIGINAL));
-        if (dateTime == null) {
-            dateTime = metadata.getDate(Property.get(META_CREATION_DATE));
-        }
-
-        ZonedDateTime zonedDateTime = null;
-        if (dateTime != null) {
-            zonedDateTime = ZonedDateTime.ofInstant(dateTime.toInstant(), ZoneId.of("UTC"));
-        }
-
         String fileName = file.getName().split("\\.")[0];
-        if (zonedDateTime == null) {
-            zonedDateTime = getDateByEpochMilli(fileName);
-        }
+        ZonedDateTime zonedDateTime = getDateByEpochMilli(fileName);
 
         if (zonedDateTime == null) {
             zonedDateTime = getDateByDateUnderscoreTime(fileName);
@@ -80,6 +68,18 @@ public class FileDateUtil {
 
         if (zonedDateTime == null) {
             zonedDateTime = getDateByScreenshotUnderscoreDateHyphenatedTimeHyphenated(fileName);
+        }
+
+        if (zonedDateTime == null) {
+            zonedDateTime = getDateByDateUnderscoreTimeUnderscoreiOS(fileName);
+        }
+
+        if (zonedDateTime == null) {
+            zonedDateTime = getDateByPXLUnderscoreDateUnderscoreTime(fileName);
+        }
+
+        if (zonedDateTime == null) {
+            throw new InvalidDateException("Could not get a timestamp for the file " + fileName);
         }
 
         return zonedDateTime;
@@ -108,7 +108,7 @@ public class FileDateUtil {
     private static ZonedDateTime getDateByImgUnderscoreDateUnderscoreTime(String fileName) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssZ");
-            return ZonedDateTime.parse(fileName.substring(4) + "+0000", dateTimeFormatter);
+            return ZonedDateTime.parse(fileName.replaceFirst("(?i)IMG_", "") + "+0000", dateTimeFormatter);
         } catch (DateTimeParseException e) {
             log.info(e.getLocalizedMessage(), e);
             return null;
@@ -128,7 +128,27 @@ public class FileDateUtil {
     private static ZonedDateTime getDateByScreenshotUnderscoreDateHyphenatedTimeHyphenated(String fileName) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ssZ");
-            return ZonedDateTime.parse(fileName.substring(11) + "+0000", dateTimeFormatter);
+            return ZonedDateTime.parse(fileName.replaceFirst("(?i)Screenshot_", "") + "+0000", dateTimeFormatter);
+        } catch (DateTimeParseException e) {
+            log.info(e.getLocalizedMessage(), e);
+            return null;
+        }
+    }
+
+    private static ZonedDateTime getDateByDateUnderscoreTimeUnderscoreiOS(String fileName) {
+        try {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssSSSZ");
+            return ZonedDateTime.parse(fileName.replaceFirst("(?i)_iOS", "") + "+0000", dateTimeFormatter);
+        } catch (DateTimeParseException e) {
+            log.info(e.getLocalizedMessage(), e);
+            return null;
+        }
+    }
+
+    private static ZonedDateTime getDateByPXLUnderscoreDateUnderscoreTime(String fileName) {
+        try {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssSSSZ");
+            return ZonedDateTime.parse(fileName.replaceFirst("(?i)PXL_", "") + "+0000", dateTimeFormatter);
         } catch (DateTimeParseException e) {
             log.info(e.getLocalizedMessage(), e);
             return null;

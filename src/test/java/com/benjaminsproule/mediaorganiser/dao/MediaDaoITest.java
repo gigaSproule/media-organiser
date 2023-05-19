@@ -1,8 +1,8 @@
 package com.benjaminsproule.mediaorganiser.dao;
 
 import com.benjaminsproule.mediaorganiser.test.Constants;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,10 +11,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import static com.benjaminsproule.mediaorganiser.test.FileResource.getFile;
 import static java.io.File.separator;
 import static java.nio.file.Files.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MediaDaoITest {
     private MediaDao mediaDao;
@@ -23,36 +25,36 @@ public class MediaDaoITest {
     private Path destinationPath;
     private String destinationDirectory;
 
-    @Before
+    @BeforeEach
     public void setup() throws URISyntaxException, IOException {
         mediaDao = new MediaDao();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsNull() throws IOException {
-        mediaDao.getFiles(null);
+        assertThrows(IllegalArgumentException.class, () -> mediaDao.getFiles(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsEmpty() throws IOException {
-        mediaDao.getFiles("");
+        assertThrows(IllegalArgumentException.class, () -> mediaDao.getFiles(""));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsBlank() throws IOException {
-        mediaDao.getFiles(" ");
+        assertThrows(IllegalArgumentException.class, () -> mediaDao.getFiles(" "));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryDoesNotExist() throws IOException {
-        mediaDao.getFiles("doesNotExist");
+        assertThrows(IllegalArgumentException.class, () -> mediaDao.getFiles("doesNotExist"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsNotADirectory() throws IOException {
         Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
-        mediaDao.getFiles(path.toString());
+        assertThrows(IllegalArgumentException.class, () -> mediaDao.getFiles(path.toString()));
     }
 
     @Test
@@ -144,41 +146,42 @@ public class MediaDaoITest {
         assertThat(paths.get(0), is(path));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsNull() throws IOException {
         Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
-        mediaDao.saveFile(null, path);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsEmpty() throws IOException {
-        Path tempPath = createTempDirectory("test");
-        Path path = createTempFile(tempPath, "test", ".jpg");
-        mediaDao.saveFile("", path);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsBlank() throws IOException {
-        Path tempPath = createTempDirectory("test");
-        Path path = createTempFile(tempPath, "test", ".jpg");
-        mediaDao.saveFile(" ", path);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSaveFileThrowsIllegalArgumentExceptionIfFileIsNull() throws IOException {
-        mediaDao.saveFile(createTempDirectory("test").toString(), null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsNotADirectory() throws IOException {
-        Path tempPath = createTempDirectory("test");
-        Path path = createTempFile(tempPath, "test", ".jpg");
-        mediaDao.saveFile(path.toString(), path);
+        assertThrows(IllegalArgumentException.class, () -> mediaDao.saveFile(null, path));
     }
 
     @Test
-    public void testSaveFileCreatesFile() throws IOException {
+    public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsEmpty() throws IOException {
+        Path tempPath = createTempDirectory("test");
+        Path path = createTempFile(tempPath, "test", ".jpg");
+        assertThrows(IllegalArgumentException.class, () -> mediaDao.saveFile("", path));
+    }
+
+    @Test
+    public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsBlank() throws IOException {
+        Path tempPath = createTempDirectory("test");
+        Path path = createTempFile(tempPath, "test", ".jpg");
+        assertThrows(IllegalArgumentException.class, () -> mediaDao.saveFile(" ", path));
+    }
+
+    @Test
+    public void testSaveFileThrowsIllegalArgumentExceptionIfFileIsNull() throws IOException {
+        assertThrows(IllegalArgumentException.class,
+            () -> mediaDao.saveFile(createTempDirectory("test").toString(), null));
+    }
+
+    @Test
+    public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsNotADirectory() throws IOException {
+        Path tempPath = createTempDirectory("test");
+        Path path = createTempFile(tempPath, "test", ".jpg");
+        assertThrows(IllegalArgumentException.class, () -> mediaDao.saveFile(path.toString(), path));
+    }
+
+    @Test
+    public void testSaveFileCreatesFile() throws IOException, URISyntaxException {
         createImageInTempDirectory();
         mediaDao.saveFile(destinationDirectory, sourceImagePath);
         assertThat(exists(destinationPath), is(true));
@@ -186,29 +189,29 @@ public class MediaDaoITest {
     }
 
     @Test
-    public void testSaveFileCreatesDirectoriesIfTheyDoNotExist() throws IOException {
+    public void testSaveFileCreatesDirectoriesIfTheyDoNotExist() throws IOException, URISyntaxException {
         createImageInTempDirectory();
         mediaDao.saveFile(destinationDirectory + separator + "directory", sourceImagePath);
         assertThat(exists(new File(destinationDirectory + separator + "directory").toPath()), is(true));
     }
 
     @Test
-    public void testSaveFileDeletesOldFile() throws IOException {
+    public void testSaveFileDeletesOldFile() throws IOException, URISyntaxException {
         createImageInTempDirectory();
         mediaDao.saveFile(destinationDirectory, sourceImagePath);
         assertThat(notExists(sourceImagePath), is(true));
     }
 
     @Test
-    public void testSaveFileCreatesNewFileWithTheSameDataAsTheOldFile() throws IOException {
+    public void testSaveFileCreatesNewFileWithTheSameDataAsTheOldFile() throws IOException, URISyntaxException {
         createImageInTempDirectory();
         mediaDao.saveFile(destinationDirectory, sourceImagePath);
         assertThat(getAttribute(new File(destinationDirectory + separator + "image.jpg").toPath(), "size"),
-                is(getAttribute(staticPath, "size")));
+            is(getAttribute(staticPath, "size")));
     }
 
     @Test
-    public void testSaveFileRenamesFileIfFileInOutputAlreadyHasThatName() throws IOException {
+    public void testSaveFileRenamesFileIfFileInOutputAlreadyHasThatName() throws IOException, URISyntaxException {
         createImageInTempDirectory();
         Path preCreatedFile = addFileToDestination("image.jpg");
 
@@ -218,7 +221,7 @@ public class MediaDaoITest {
     }
 
     @Test
-    public void testSaveFileIncrementsRenamedFileIndexIfFileInOutputAlreadyHasThatName() throws IOException {
+    public void testSaveFileIncrementsRenamedFileIndexIfFileInOutputAlreadyHasThatName() throws IOException, URISyntaxException {
         createImageInTempDirectory();
         Path preCreatedFile = addFileToDestination("image.jpg");
         Path preCreatedFileIncremented = addFileToDestination("image0.jpg");
@@ -226,7 +229,7 @@ public class MediaDaoITest {
         mediaDao.saveFile(destinationDirectory, sourceImagePath);
 
         checkFilesExist(preCreatedFile, preCreatedFileIncremented,
-                new File(destinationDirectory + separator + "image1.jpg").toPath());
+            new File(destinationDirectory + separator + "image1.jpg").toPath());
     }
 
     private Path addFileToDestination(String fileName) throws IOException {
@@ -242,10 +245,10 @@ public class MediaDaoITest {
         }
     }
 
-    private void createImageInTempDirectory() throws IOException {
-        staticPath = new File(Constants.RESOURCES_DIRECTORY + separator + "image.jpg").toPath();
+    private void createImageInTempDirectory() throws IOException, URISyntaxException {
+        staticPath = getFile("image.jpg").toPath();
         sourceImagePath = new File(
-                Files.createTempDirectory(Constants.SOURCE_PATH).toString() + separator + "image.jpg").toPath();
+            Files.createTempDirectory(Constants.SOURCE_PATH).toString() + separator + "image.jpg").toPath();
         destinationPath = Files.createTempDirectory(Constants.DESTINATION_PATH);
         destinationDirectory = destinationPath.toString();
         copy(staticPath, sourceImagePath);

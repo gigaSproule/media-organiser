@@ -1,9 +1,9 @@
 package com.benjaminsproule.mediaorganiser.gui;
 
+import com.benjaminsproule.mediaorganiser.dao.MediaDao;
 import com.benjaminsproule.mediaorganiser.domain.DateConstants;
 import com.benjaminsproule.mediaorganiser.domain.Progress;
 import com.benjaminsproule.mediaorganiser.service.MediaService;
-
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -39,7 +39,7 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         super("Media Organiser");
         executorService = Executors.newFixedThreadPool(2);
-        mediaService = new MediaService();
+        mediaService = new MediaService(new MediaDao());
         initUi();
     }
 
@@ -149,7 +149,7 @@ public class MainFrame extends JFrame {
                     String format = buttonGroup.getSelection().getActionCommand();
 
                     List<String> errorMessages = mediaService.organise(inputDirectory.getAbsolutePath(),
-                            outputDirectory.getAbsolutePath(), format);
+                        outputDirectory.getAbsolutePath(), format);
                     errors.addAll(errorMessages);
                 } catch (Exception e) {
                     showMessageDialog(null, e.getLocalizedMessage());

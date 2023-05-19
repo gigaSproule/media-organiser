@@ -1,40 +1,45 @@
 package com.benjaminsproule.mediaorganiser;
 
+import static java.util.Collections.emptyList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
+
 import com.benjaminsproule.mediaorganiser.domain.DateConstants;
 import com.benjaminsproule.mediaorganiser.service.MediaService;
 import com.benjaminsproule.mediaorganiser.test.Constants;
 import com.benjaminsproule.mediaorganiser.util.MimeTypesUtil;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import static java.util.Collections.emptyList;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.*;
-
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Main.class, MimeTypesUtil.class })
-@PowerMockIgnore("javax.management.*")
 public class MainTest {
-    @Mock
-    private MediaService mediaService;
+    private MockedStatic<MimeTypesUtil> mockedMimeTypesUtil;
+    private MockedConstruction<MediaService> mockedMediaService;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
-        initMocks(this);
-        mockStatic(MimeTypesUtil.class);
-        when(MimeTypesUtil.requiresMimeTypesFile()).thenReturn(false);
+        mockedMimeTypesUtil = mockStatic(MimeTypesUtil.class);
+        mockedMimeTypesUtil.when(MimeTypesUtil::requiresMimeTypesFile).thenReturn(false);
 
-        whenNew(MediaService.class).withNoArguments().thenReturn(mediaService);
-        when(mediaService.organise(anyString(), anyString(), anyString())).thenReturn(emptyList());
+        mockedMediaService = mockConstruction(MediaService.class, (mock, context) -> {
+            when(mock.organise(anyString(), anyString(), anyString())).thenReturn(emptyList());
+        });
+    }
+
+    @AfterEach
+    public void tearDown() {
+        mockedMimeTypesUtil.close();
+        mockedMediaService.close();
     }
 
     @Test
@@ -43,23 +48,20 @@ public class MainTest {
                 DateConstants.YYYY_MM_DD };
         Main.main(args);
 
-        verifyStatic();
-        MimeTypesUtil.requiresMimeTypesFile();
-        verifyStatic(never());
-        MimeTypesUtil.createMimeTypesFile();
+        mockedMimeTypesUtil.verify(MimeTypesUtil::requiresMimeTypesFile);
+        mockedMimeTypesUtil.verify(MimeTypesUtil::createMimeTypesFile, never());
     }
 
     @Test
     public void testMainCallsCreateMimeTypesFileIfRequiresMimeTypesFileTrue() throws Exception {
-        when(MimeTypesUtil.requiresMimeTypesFile()).thenReturn(true);
+        mockedMimeTypesUtil.when(MimeTypesUtil::requiresMimeTypesFile).thenReturn(true);
 
         String[] args = new String[] { "-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH, "-of",
                 DateConstants.YYYY_MM_DD };
         Main.main(args);
 
-        verifyStatic();
-        MimeTypesUtil.requiresMimeTypesFile();
-        MimeTypesUtil.createMimeTypesFile();
+        mockedMimeTypesUtil.verify(MimeTypesUtil::requiresMimeTypesFile);
+        mockedMimeTypesUtil.verify(MimeTypesUtil::createMimeTypesFile);
     }
 
     @Test
@@ -69,7 +71,7 @@ public class MainTest {
             Main.main(args);
             fail("IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
-            verify(mediaService, never()).organise(anyString(), anyString(), anyString());
+            assertThat(mockedMediaService.constructed(), empty());
         }
     }
 
@@ -80,7 +82,7 @@ public class MainTest {
             Main.main(args);
             fail("IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
-            verify(mediaService, never()).organise(anyString(), anyString(), anyString());
+            assertThat(mockedMediaService.constructed(), empty());
         }
     }
 
@@ -91,7 +93,7 @@ public class MainTest {
             Main.main(args);
             fail("IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
-            verify(mediaService, never()).organise(anyString(), anyString(), anyString());
+            assertThat(mockedMediaService.constructed(), empty());
         }
     }
 
@@ -100,6 +102,6 @@ public class MainTest {
         String[] args = new String[] { "-id", Constants.SOURCE_PATH, "-od", Constants.DESTINATION_PATH, "-of",
                 DateConstants.YYYY_MM_DD };
         Main.main(args);
-        verify(mediaService).organise(anyString(), anyString(), anyString());
+        verify(mockedMediaService.constructed().get(0)).organise(anyString(), anyString(), anyString());
     }
 }

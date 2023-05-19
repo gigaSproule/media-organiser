@@ -1,11 +1,11 @@
 package com.benjaminsproule.mediaorganiser.service;
 
-import org.junit.Test;
-
-import com.benjaminsproule.mediaorganiser.domain.Progress;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+
+import org.junit.jupiter.api.Test;
+
+import com.benjaminsproule.mediaorganiser.domain.Progress;
 
 public class ProgressTest {
 

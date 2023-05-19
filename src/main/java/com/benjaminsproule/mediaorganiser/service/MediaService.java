@@ -21,27 +21,22 @@ import static com.benjaminsproule.mediaorganiser.util.FileDateUtil.getDateFromFi
 public class MediaService {
     private static final DecimalFormat decimalFormat = new DecimalFormat("#.00");
 
-    private MediaDao mediaDao;
+    private final MediaDao mediaDao;
 
-    public MediaService() {
-        mediaDao = new MediaDao();
+    public MediaService(MediaDao mediaDao) {
+        this.mediaDao = mediaDao;
     }
 
     /**
      * Organises the files in the inputDirectory into the outputDirectory in the
      * format of the outputFormat
-     * 
-     * @param inputDirectory
-     *            the directory of the files to organise
-     * @param outputDirectory
-     *            the directory to move the files into
-     * @param outputFormat
-     *            the format of the folder names
+     *
+     * @param inputDirectory  the directory of the files to organise
+     * @param outputDirectory the directory to move the files into
+     * @param outputFormat    the format of the folder names
      * @return a list of errors
-     * @throws IOException
-     *             if there is an issue with the file being read
-     * @throws InterruptedException
-     *             if the thread is interrupted
+     * @throws IOException          if there is an issue with the file being read
+     * @throws InterruptedException if the thread is interrupted
      */
     public List<String> organise(String inputDirectory, String outputDirectory, String outputFormat)
             throws IOException, InterruptedException {
@@ -68,7 +63,7 @@ public class MediaService {
 
         executorService.shutdown();
         while (!executorService.isTerminated()) {
-            double progress = (Progress.getNumberOfFilesProcessed() / Progress.getTotalNumberOfFiles()) * 100;
+            double progress = ((double) Progress.getNumberOfFilesProcessed() / Progress.getTotalNumberOfFiles()) * 100;
             log.debug("Progress: " + decimalFormat.format(progress) + "%");
         }
 
