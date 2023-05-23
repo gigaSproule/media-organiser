@@ -79,6 +79,22 @@ public class FileDateUtil {
         }
 
         if (zonedDateTime == null) {
+            zonedDateTime = getDateByDateUnderscoreTimeHyphenCOLLAGE(fileName);
+        }
+
+        if (zonedDateTime == null) {
+            zonedDateTime = getDateByIndexedBurstFileName(fileName);
+        }
+
+        if (zonedDateTime == null) {
+            zonedDateTime = getDateByBurstActionFileName(fileName);
+        }
+
+        if (zonedDateTime == null) {
+            zonedDateTime = getDateByBurstCollageFileName(fileName);
+        }
+
+        if (zonedDateTime == null) {
             throw new InvalidDateException("Could not get a timestamp for the file " + fileName);
         }
 
@@ -149,6 +165,50 @@ public class FileDateUtil {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssSSSZ");
             return ZonedDateTime.parse(fileName.replaceFirst("(?i)PXL_", "") + "+0000", dateTimeFormatter);
+        } catch (DateTimeParseException e) {
+            log.info(e.getLocalizedMessage(), e);
+            return null;
+        }
+    }
+
+    private static ZonedDateTime getDateByDateUnderscoreTimeHyphenCOLLAGE(String fileName) {
+        try {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssSSSZ");
+            return ZonedDateTime.parse(fileName.replaceFirst("(?i)-COLLAGE", "") + "+0000", dateTimeFormatter);
+        } catch (DateTimeParseException e) {
+            log.info(e.getLocalizedMessage(), e);
+            return null;
+        }
+    }
+
+    private static ZonedDateTime getDateByIndexedBurstFileName(String fileName) {
+        try {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
+            return ZonedDateTime.parse(fileName
+                .replaceFirst("(?i)(\\d{5})(IMG|XTR)_(\\d{5})_BURST", "")
+                .replaceFirst("(?i)_COVER", "") + "+0000", dateTimeFormatter);
+        } catch (DateTimeParseException e) {
+            log.info(e.getLocalizedMessage(), e);
+            return null;
+        }
+    }
+
+    private static ZonedDateTime getDateByBurstActionFileName(String fileName) {
+        try {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
+            return ZonedDateTime.parse(fileName
+                .replaceFirst("(?i)Burst_Cover_GIF_Action_", "") + "+0000", dateTimeFormatter);
+        } catch (DateTimeParseException e) {
+            log.info(e.getLocalizedMessage(), e);
+            return null;
+        }
+    }
+
+    private static ZonedDateTime getDateByBurstCollageFileName(String fileName) {
+        try {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
+            return ZonedDateTime.parse(fileName
+                .replaceFirst("(?i)Burst_Cover_Collage_", "") + "+0000", dateTimeFormatter);
         } catch (DateTimeParseException e) {
             log.info(e.getLocalizedMessage(), e);
             return null;

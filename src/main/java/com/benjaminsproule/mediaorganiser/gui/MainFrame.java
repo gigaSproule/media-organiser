@@ -44,7 +44,7 @@ public class MainFrame extends JFrame {
     }
 
     private void initUi() {
-        GridLayout gridLayout = new GridLayout(6, 3);
+        GridLayout gridLayout = new GridLayout(7, 3);
         JPanel jPanel = new JPanel(gridLayout);
         this.getContentPane().add(jPanel);
 
@@ -97,29 +97,36 @@ public class MainFrame extends JFrame {
         });
 
         buttonGroup = new ButtonGroup();
-        JRadioButton numberFormat = new JRadioButton(DateConstants.YYYY_MM_DD);
-        numberFormat.setActionCommand(DateConstants.YYYY_MM_DD);
-        numberFormat.setSelected(true);
-        JRadioButton textFormat = new JRadioButton(DateConstants.YYYY_MMMM_DD);
-        textFormat.setActionCommand(DateConstants.YYYY_MMMM_DD);
-        JRadioButton numberTextFormat = new JRadioButton(DateConstants.YYYY_MM_MMMM_DD);
-        numberTextFormat.setActionCommand(DateConstants.YYYY_MM_MMMM_DD);
+        JRadioButton yearMonthFormat = new JRadioButton(DateConstants.YYYY_MM);
+        yearMonthFormat.setActionCommand(DateConstants.YYYY_MM);
+        yearMonthFormat.setSelected(true);
+        JRadioButton numberYearMonthDayFormat = new JRadioButton(DateConstants.YYYY_MM_DD);
+        numberYearMonthDayFormat.setActionCommand(DateConstants.YYYY_MM_DD);
+        JRadioButton textYearMonthDateFormat = new JRadioButton(DateConstants.YYYY_MMMM_DD);
+        textYearMonthDateFormat.setActionCommand(DateConstants.YYYY_MMMM_DD);
+        JRadioButton numberTextYearMonthDayFormat = new JRadioButton(DateConstants.YYYY_MM_MMMM_DD);
+        numberTextYearMonthDayFormat.setActionCommand(DateConstants.YYYY_MM_MMMM_DD);
 
-        buttonGroup.add(numberFormat);
-        buttonGroup.add(textFormat);
-        buttonGroup.add(numberTextFormat);
-
-        jPanel.add(new JLabel());
-        jPanel.add(new JLabel());
-        jPanel.add(numberFormat);
+        buttonGroup.add(yearMonthFormat);
+        buttonGroup.add(numberYearMonthDayFormat);
+        buttonGroup.add(textYearMonthDateFormat);
+        buttonGroup.add(numberTextYearMonthDayFormat);
 
         jPanel.add(new JLabel("Formatting"));
         jPanel.add(new JLabel());
-        jPanel.add(textFormat);
+        jPanel.add(yearMonthFormat);
 
         jPanel.add(new JLabel());
         jPanel.add(new JLabel());
-        jPanel.add(numberTextFormat);
+        jPanel.add(numberYearMonthDayFormat);
+
+        jPanel.add(new JLabel());
+        jPanel.add(new JLabel());
+        jPanel.add(textYearMonthDateFormat);
+
+        jPanel.add(new JLabel());
+        jPanel.add(new JLabel());
+        jPanel.add(numberTextYearMonthDayFormat);
 
         jPanel.add(new JLabel("Files processed"));
         JLabel progress = new JLabel();

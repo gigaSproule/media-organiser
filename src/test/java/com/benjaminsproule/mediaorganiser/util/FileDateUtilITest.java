@@ -1,9 +1,10 @@
 package com.benjaminsproule.mediaorganiser.util;
 
 import com.benjaminsproule.mediaorganiser.exception.InvalidDateException;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.File;
 import java.time.ZonedDateTime;
@@ -99,114 +100,34 @@ public class FileDateUtilITest {
         assertThat(zonedDateTime.getNano(), is(0));
     }
 
-    @Test
-    public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata_FileNameEpochMillis() throws Exception {
-        File file = getFile("3661100.jpg");
+    @ParameterizedTest
+    @CsvSource({
+        "3661100.jpg,1970-01-01T01:01:01.100Z[UTC]",
+        "19700101_010101.jpg,1970-01-01T01:01:01Z",
+        "IMG_19700101_010101.jpg,1970-01-01T01:01:01Z",
+        "1970-01-01_01-01-01.jpg,1970-01-01T01:01:01Z",
+        "Screenshot_1970-01-01_01-01-01.jpg,1970-01-01T01:01:01Z",
+        "20230325_110242428_iOS.heic,2023-03-25T11:02:42.428Z",
+        "PXL_20221227_152002772.jpg,2022-12-27T15:20:02.772Z",
+        "PXL_20221227_152002772.MP.jpg,2022-12-27T15:20:02.772Z",
+        "20221227_152002772-COLLAGE.jpg,2022-12-27T15:20:02.772Z",
+        "00000IMG_00000_BURST20170430172516.jpg,2017-04-30T17:25:16Z",
+        "00000IMG_00000_BURST20170430172516_COVER.jpg,2017-04-30T17:25:16Z",
+        "00001IMG_00001_BURST20170430172516.jpg,2017-04-30T17:25:16Z",
+        "00001IMG_00001_BURST20170430172516_COVER.jpg,2017-04-30T17:25:16Z",
+        "00000XTR_00000_BURST20170430172516.jpg,2017-04-30T17:25:16Z",
+        "00000XTR_00000_BURST20170430172516_COVER.jpg,2017-04-30T17:25:16Z",
+        "00001XTR_00001_BURST20170430172516.jpg,2017-04-30T17:25:16Z",
+        "00001XTR_00001_BURST20170430172516_COVER.jpg,2017-04-30T17:25:16Z",
+        "Burst_Cover_GIF_Action_20170401114720.gif,2017-04-01T11:47:20Z",
+        "Burst_Cover_Collage_20170430172710.jpg,2017-04-30T17:27:10Z"
+    })
+    public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata(String filename, String expectedDateTime) throws Exception {
+        File file = getFile(filename);
 
         ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);
 
-        assertThat(zonedDateTime.getYear(), is(1970));
-        assertThat(zonedDateTime.getMonthValue(), is(1));
-        assertThat(zonedDateTime.getDayOfMonth(), is(1));
-        assertThat(zonedDateTime.getHour(), is(1));
-        assertThat(zonedDateTime.getMinute(), is(1));
-        assertThat(zonedDateTime.getSecond(), is(1));
-        assertThat(zonedDateTime.getNano(), is(100000000));
-    }
-
-    @Test
-    public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata_FileNameDateUnderscoreTime() throws Exception {
-        File file = getFile("19700101_010101.jpg");
-
-        ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);
-
-        assertThat(zonedDateTime.getYear(), is(1970));
-        assertThat(zonedDateTime.getMonthValue(), is(1));
-        assertThat(zonedDateTime.getDayOfMonth(), is(1));
-        assertThat(zonedDateTime.getHour(), is(1));
-        assertThat(zonedDateTime.getMinute(), is(1));
-        assertThat(zonedDateTime.getSecond(), is(1));
-        assertThat(zonedDateTime.getNano(), is(0));
-    }
-
-    @Test
-    public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata_FileNameImgUnderscoreDateUnderscoreTime()
-        throws Exception {
-        File file = getFile("IMG_19700101_010101.jpg");
-
-        ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);
-
-        assertThat(zonedDateTime.getYear(), is(1970));
-        assertThat(zonedDateTime.getMonthValue(), is(1));
-        assertThat(zonedDateTime.getDayOfMonth(), is(1));
-        assertThat(zonedDateTime.getHour(), is(1));
-        assertThat(zonedDateTime.getMinute(), is(1));
-        assertThat(zonedDateTime.getSecond(), is(1));
-        assertThat(zonedDateTime.getNano(), is(0));
-    }
-
-    @Test
-    public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata_FileNameDateHyphenatedUnderscoreTimeHyphenated()
-        throws Exception {
-        File file = getFile("1970-01-01_01-01-01.jpg");
-
-        ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);
-
-        assertThat(zonedDateTime.getYear(), is(1970));
-        assertThat(zonedDateTime.getMonthValue(), is(1));
-        assertThat(zonedDateTime.getDayOfMonth(), is(1));
-        assertThat(zonedDateTime.getHour(), is(1));
-        assertThat(zonedDateTime.getMinute(), is(1));
-        assertThat(zonedDateTime.getSecond(), is(1));
-        assertThat(zonedDateTime.getNano(), is(0));
-    }
-
-    @Test
-    public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata_FileNameScreenshotUnderscoreDateHyphenatedTimeHyphenated()
-        throws Exception {
-        File file = getFile("Screenshot_1970-01-01_01-01-01.jpg");
-
-        ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);
-
-        assertThat(zonedDateTime.getYear(), is(1970));
-        assertThat(zonedDateTime.getMonthValue(), is(1));
-        assertThat(zonedDateTime.getDayOfMonth(), is(1));
-        assertThat(zonedDateTime.getHour(), is(1));
-        assertThat(zonedDateTime.getMinute(), is(1));
-        assertThat(zonedDateTime.getSecond(), is(1));
-        assertThat(zonedDateTime.getNano(), is(0));
-    }
-
-    @Test
-    public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata_FileNameDateUnderscoreTimeUnderscoreiOS()
-        throws Exception {
-        File file = getFile("20230325_110242428_iOS.heic");
-
-        ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);
-
-        assertThat(zonedDateTime.getYear(), is(2023));
-        assertThat(zonedDateTime.getMonthValue(), is(3));
-        assertThat(zonedDateTime.getDayOfMonth(), is(25));
-        assertThat(zonedDateTime.getHour(), is(11));
-        assertThat(zonedDateTime.getMinute(), is(2));
-        assertThat(zonedDateTime.getSecond(), is(42));
-        assertThat(zonedDateTime.getNano(), is(428000000));
-    }
-
-    @Test
-    public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata_FileNamePXLUnderscoreDateUnderscoreTime()
-        throws Exception {
-        File file = getFile("PXL_20221227_152002772.jpg");
-
-        ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);
-
-        assertThat(zonedDateTime.getYear(), is(2022));
-        assertThat(zonedDateTime.getMonthValue(), is(12));
-        assertThat(zonedDateTime.getDayOfMonth(), is(27));
-        assertThat(zonedDateTime.getHour(), is(15));
-        assertThat(zonedDateTime.getMinute(), is(20));
-        assertThat(zonedDateTime.getSecond(), is(2));
-        assertThat(zonedDateTime.getNano(), is(772000000));
+        assertThat(zonedDateTime, is(ZonedDateTime.parse(expectedDateTime)));
     }
 
     @Test
