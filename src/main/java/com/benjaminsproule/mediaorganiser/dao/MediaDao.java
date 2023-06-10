@@ -63,12 +63,15 @@ public class MediaDao {
 
             try {
                 String contentType = mimeTypeDetector.detectMimeType(path);
-                if (contentType != null && (contentType.equalsIgnoreCase(IMAGE_JPG)
-                    || contentType.equalsIgnoreCase(IMAGE_JPEG) || contentType.equalsIgnoreCase(IMAGE_TIFF)
+                if (contentType != null && (contentType.equalsIgnoreCase(IMAGE_PNG)
+                    || contentType.equalsIgnoreCase(IMAGE_JPG) || contentType.equalsIgnoreCase(IMAGE_JPEG)
                     || contentType.equalsIgnoreCase(IMAGE_HEIC) || contentType.equalsIgnoreCase(IMAGE_HEIF)
+                    || contentType.equalsIgnoreCase(IMAGE_TIFF)
                     || contentType.equalsIgnoreCase(VIDEO_MP4) || contentType.equalsIgnoreCase(VIDEO_AVI)
                     || contentType.equalsIgnoreCase(VIDEO_QUICKTIME))) {
                     images.add(path);
+                } else {
+                    log.debug(contentType + " is not a valid file type.");
                 }
             } catch (GetBytesException exception) {
                 log.error("Exception thrown whilst trying to detect the mime type.", exception);

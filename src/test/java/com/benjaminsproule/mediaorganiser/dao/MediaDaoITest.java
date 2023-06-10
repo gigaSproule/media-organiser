@@ -72,14 +72,6 @@ public class MediaDaoITest {
     }
 
     @Test
-    public void testGetFilesDoesNotReturnPngFile() throws IOException {
-        Path tempPath = createTempDirectory("test");
-        createTempFile(tempPath, "test", ".png");
-        List<Path> paths = mediaDao.getFiles(tempPath.toString());
-        assertThat(paths.size(), is(0));
-    }
-
-    @Test
     public void testGetFilesDoesNotReturnGifFile() throws IOException {
         Path tempPath = createTempDirectory("test");
         createTempFile(tempPath, "test", ".gif");
@@ -93,6 +85,16 @@ public class MediaDaoITest {
         createTempFile(tempPath, "test", ".bmp");
         List<Path> paths = mediaDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(0));
+    }
+
+    @Test
+    public void testGetFilesReturnsPngFile() throws IOException {
+        Path tempPath = createTempDirectory("test");
+        Path path = createTempFile(tempPath, "test", ".png");
+
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
     }
 
     @Test

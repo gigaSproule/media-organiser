@@ -12,6 +12,7 @@ public class MimeTypesUtil {
 
     public static final String IMAGE_JPG = "image/jpg";
     public static final String IMAGE_JPEG = "image/jpeg";
+    public static final String IMAGE_PNG = "image/png";
     public static final String IMAGE_TIFF = "image/tiff";
     public static final String IMAGE_HEIC = "image/heic";
     public static final String IMAGE_HEIF = "image/heif";
