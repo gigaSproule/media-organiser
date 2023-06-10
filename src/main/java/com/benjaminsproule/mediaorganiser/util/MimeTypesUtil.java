@@ -13,8 +13,11 @@ public class MimeTypesUtil {
     public static final String IMAGE_JPG = "image/jpg";
     public static final String IMAGE_JPEG = "image/jpeg";
     public static final String IMAGE_TIFF = "image/tiff";
+    public static final String IMAGE_HEIC = "image/heic";
+    public static final String IMAGE_HEIF = "image/heif";
     public static final String VIDEO_MP4 = "video/mp4";
-    public static final String VIDEO_AVI = "video/avi";
+    public static final String VIDEO_AVI = "video/x-msvideo";
+    public static final String VIDEO_QUICKTIME = "video/quicktime";
     public static final String IMAGES_JPG_MAPPING = IMAGE_JPG + "\tjpg jpeg";
 
     public static final String IMAGES_TIFF = IMAGE_TIFF + "\ttif tiff";
@@ -33,7 +36,7 @@ public class MimeTypesUtil {
     /**
      * Creates a mime types file in the home directory if it doesn't already
      * exist, containing the required mime types for this application
-     * 
+     *
      * @throws IOException
      */
     public static void createMimeTypesFile() throws IOException {
@@ -50,7 +53,7 @@ public class MimeTypesUtil {
 
     /**
      * Return whether the system requires a mime types file.
-     * 
+     *
      * @return true if the system is Mac OS X or Linux, false if it's not
      */
     public static boolean requiresMimeTypesFile() {

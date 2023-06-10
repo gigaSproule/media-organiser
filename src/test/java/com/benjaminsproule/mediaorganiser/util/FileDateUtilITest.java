@@ -73,6 +73,20 @@ public class FileDateUtilITest {
     }
 
     @Test
+    public void testGetDateFromFile_UsesVideoMetadata_mov() throws Exception {
+        File file = getFile("video.mov");
+        ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);
+
+        assertThat(zonedDateTime.getYear(), is(2023));
+        assertThat(zonedDateTime.getMonthValue(), is(6));
+        assertThat(zonedDateTime.getDayOfMonth(), is(10));
+        assertThat(zonedDateTime.getHour(), is(22));
+        assertThat(zonedDateTime.getMinute(), is(3));
+        assertThat(zonedDateTime.getSecond(), is(51));
+        assertThat(zonedDateTime.getNano(), is(0));
+    }
+
+    @Test
     public void testGetDateFromFile_UsesVideoMetadata_mp4() throws Exception {
         File file = getFile("video.mp4");
         ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);

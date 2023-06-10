@@ -5,6 +5,8 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.mov.QuickTimeDirectory;
+import com.drew.metadata.mov.metadata.QuickTimeMetadataDirectory;
 import com.drew.metadata.mp4.media.Mp4MetaDirectory;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,6 +45,13 @@ public class FileDateUtil {
             Mp4MetaDirectory mp4MetaDirectory = metadata.getFirstDirectoryOfType(Mp4MetaDirectory.class);
             if (mp4MetaDirectory != null) {
                 dateTime = mp4MetaDirectory.getDate(Mp4MetaDirectory.TAG_CREATION_TIME);
+            }
+            if (dateTime != null) {
+                return ZonedDateTime.ofInstant(dateTime.toInstant(), ZoneId.of("UTC"));
+            }
+            QuickTimeDirectory quickTimeDirectory = metadata.getFirstDirectoryOfType(QuickTimeDirectory.class);
+            if (quickTimeDirectory != null) {
+                dateTime = quickTimeDirectory.getDate(QuickTimeDirectory.TAG_CREATION_TIME);
             }
             if (dateTime != null) {
                 return ZonedDateTime.ofInstant(dateTime.toInstant(), ZoneId.of("UTC"));
@@ -185,8 +194,8 @@ public class FileDateUtil {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
             return ZonedDateTime.parse(fileName
-                .replaceFirst("(?i)(\\d{5})(IMG|XTR)_(\\d{5})_BURST", "")
-                .replaceFirst("(?i)_COVER", "") + "+0000", dateTimeFormatter);
+                    .replaceFirst("(?i)(\\d{5})(IMG|XTR)_(\\d{5})_BURST", "")
+                    .replaceFirst("(?i)_COVER", "") + "+0000", dateTimeFormatter);
         } catch (DateTimeParseException e) {
             log.info(e.getLocalizedMessage(), e);
             return null;
@@ -197,7 +206,7 @@ public class FileDateUtil {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
             return ZonedDateTime.parse(fileName
-                .replaceFirst("(?i)Burst_Cover_GIF_Action_", "") + "+0000", dateTimeFormatter);
+                    .replaceFirst("(?i)Burst_Cover_GIF_Action_", "") + "+0000", dateTimeFormatter);
         } catch (DateTimeParseException e) {
             log.info(e.getLocalizedMessage(), e);
             return null;
@@ -208,7 +217,7 @@ public class FileDateUtil {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
             return ZonedDateTime.parse(fileName
-                .replaceFirst("(?i)Burst_Cover_Collage_", "") + "+0000", dateTimeFormatter);
+                    .replaceFirst("(?i)Burst_Cover_Collage_", "") + "+0000", dateTimeFormatter);
         } catch (DateTimeParseException e) {
             log.info(e.getLocalizedMessage(), e);
             return null;

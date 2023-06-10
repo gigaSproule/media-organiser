@@ -1,5 +1,9 @@
 package com.benjaminsproule.mediaorganiser.dao;
 
+import lombok.extern.slf4j.Slf4j;
+import org.overviewproject.mime_types.GetBytesException;
+import org.overviewproject.mime_types.MimeTypeDetector;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -12,13 +16,19 @@ import static java.nio.file.Files.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.join;
 
+@Slf4j
 public class MediaDao {
+
+    private final MimeTypeDetector mimeTypeDetector;
+
+    public MediaDao() {
+        this.mimeTypeDetector = new MimeTypeDetector();
+    }
 
     /**
      * Get the files from the given inputDirectory
-     * 
-     * @param inputDirectory
-     *            the directory to get the media files from
+     *
+     * @param inputDirectory the directory to get the media files from
      * @return a list of {@link Path}s of the media files
      * @throws IOException
      */
@@ -51,11 +61,18 @@ public class MediaDao {
                 continue;
             }
 
-            String contentType = probeContentType(path);
-            if (contentType != null && (contentType.equalsIgnoreCase(IMAGE_JPG)
+            try {
+                String contentType = mimeTypeDetector.detectMimeType(path);
+                if (contentType != null && (contentType.equalsIgnoreCase(IMAGE_JPG)
                     || contentType.equalsIgnoreCase(IMAGE_JPEG) || contentType.equalsIgnoreCase(IMAGE_TIFF)
-                    || contentType.equalsIgnoreCase(VIDEO_MP4) || contentType.equalsIgnoreCase(VIDEO_AVI))) {
-                images.add(path);
+                    || contentType.equalsIgnoreCase(IMAGE_HEIC) || contentType.equalsIgnoreCase(IMAGE_HEIF)
+                    || contentType.equalsIgnoreCase(VIDEO_MP4) || contentType.equalsIgnoreCase(VIDEO_AVI)
+                    || contentType.equalsIgnoreCase(VIDEO_QUICKTIME))) {
+                    images.add(path);
+                }
+            } catch (GetBytesException exception) {
+                log.error("Exception thrown whilst trying to detect the mime type.", exception);
+                return;
             }
         }
     }

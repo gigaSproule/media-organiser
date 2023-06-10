@@ -136,6 +136,56 @@ public class MediaDaoITest {
     }
 
     @Test
+    public void testGetFilesReturnsHeicFile() throws IOException {
+        Path tempPath = createTempDirectory("test");
+        Path path = createTempFile(tempPath, "test", ".heic");
+
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
+    }
+
+    @Test
+    public void testGetFilesReturnsHeifFile() throws IOException {
+        Path tempPath = createTempDirectory("test");
+        Path path = createTempFile(tempPath, "test", ".heif");
+
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
+    }
+
+    @Test
+    public void testGetFilesReturnsAviFile() throws IOException {
+        Path tempPath = createTempDirectory("test");
+        Path path = createTempFile(tempPath, "test", ".avi");
+
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
+    }
+
+    @Test
+    public void testGetFilesReturnsMovFile() throws IOException {
+        Path tempPath = createTempDirectory("test");
+        Path path = createTempFile(tempPath, "test", ".mov");
+
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
+    }
+
+    @Test
+    public void testGetFilesReturnsMp4File() throws IOException {
+        Path tempPath = createTempDirectory("test");
+        Path path = createTempFile(tempPath, "test", ".mp4");
+
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
+        assertThat(paths.size(), is(1));
+        assertThat(paths.get(0), is(path));
+    }
+
+    @Test
     public void testGetFilesReturnsFilesWithinSubDirectories() throws IOException {
         Path tempPath = createTempDirectory("test");
         Path directory = createTempDirectory(tempPath, "test");
