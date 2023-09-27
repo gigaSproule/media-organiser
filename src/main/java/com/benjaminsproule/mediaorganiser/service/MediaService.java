@@ -36,35 +36,41 @@ public class MediaService {
      * @param outputFormat    the format of the folder names
      * @return a list of errors
      * @throws IOException          if there is an issue with the file being read
-     * @throws InterruptedException if the thread is interrupted
      */
     public List<String> organise(String inputDirectory, String outputDirectory, String outputFormat)
-            throws IOException, InterruptedException {
+        throws IOException {
         Progress.reset();
         List<Path> paths = mediaDao.getFiles(inputDirectory);
         Progress.setTotalNumberOfFiles(paths.size());
         List<String> errors = new ArrayList<>();
 
-        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        for (Path path : paths) {
-            executorService.submit(() -> {
+        try (ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())) {
+            for (Path path : paths) {
+                executorService.submit(() -> {
+                    try {
+                        ZonedDateTime zonedDateTime = getDateFromFile(path.toFile());
+                        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outputFormat);
+                        mediaDao.saveFile(outputDirectory + "/" + zonedDateTime.format(outputFormatter), path);
+                        mediaDao.deleteEmptyDirectory(path);
+                    } catch (IOException | InvalidDateException e) {
+                        log.error(e.getLocalizedMessage(), e);
+                        errors.add(e.getLocalizedMessage());
+                    }
+
+                    Progress.inc();
+                });
+            }
+
+            executorService.shutdown();
+            while (!executorService.isTerminated()) {
                 try {
-                    ZonedDateTime zonedDateTime = getDateFromFile(path.toFile());
-                    DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outputFormat);
-                    mediaDao.saveFile(outputDirectory + "/" + zonedDateTime.format(outputFormatter), path);
-                } catch (IOException | InvalidDateException e) {
+                    Thread.sleep(100L);
+                } catch (InterruptedException e) {
                     log.error(e.getLocalizedMessage(), e);
-                    errors.add(e.getLocalizedMessage());
                 }
-
-                Progress.inc();
-            });
-        }
-
-        executorService.shutdown();
-        while (!executorService.isTerminated()) {
-            double progress = ((double) Progress.getNumberOfFilesProcessed() / Progress.getTotalNumberOfFiles()) * 100;
-            log.debug("Progress: " + decimalFormat.format(progress) + "%");
+                double progress = ((double) Progress.getNumberOfFilesProcessed() / Progress.getTotalNumberOfFiles()) * 100;
+                log.info("Progress: " + decimalFormat.format(progress) + "%");
+            }
         }
 
         return errors;

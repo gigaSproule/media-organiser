@@ -4,6 +4,7 @@ import com.benjaminsproule.mediaorganiser.dao.MediaDao;
 import com.benjaminsproule.mediaorganiser.gui.MainFrame;
 import com.benjaminsproule.mediaorganiser.service.MediaService;
 import com.benjaminsproule.mediaorganiser.util.MimeTypesUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -12,6 +13,7 @@ import org.apache.commons.cli.Options;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+@Slf4j
 public class Main {
     public static void main(String[] args) throws Exception {
         if (MimeTypesUtil.requiresMimeTypesFile()) {
@@ -19,6 +21,7 @@ public class Main {
         }
 
         if (args.length == 0) {
+            log.debug("No args passed in, so starting UI");
             invokeLater(() -> {
                 MainFrame mainFrame = new MainFrame();
                 mainFrame.setVisible(true);

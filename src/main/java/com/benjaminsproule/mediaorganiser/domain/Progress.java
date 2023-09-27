@@ -1,16 +1,12 @@
 package com.benjaminsproule.mediaorganiser.domain;
 
+import lombok.Getter;
+
 public class Progress {
+    @Getter
     private static int totalNumberOfFiles;
+    @Getter
     private static int numberOfFilesProcessed;
-
-    public static int getTotalNumberOfFiles() {
-        return totalNumberOfFiles;
-    }
-
-    public static int getNumberOfFilesProcessed() {
-        return numberOfFilesProcessed;
-    }
 
     public static void setTotalNumberOfFiles(int numberOfFiles) {
         totalNumberOfFiles = numberOfFiles;

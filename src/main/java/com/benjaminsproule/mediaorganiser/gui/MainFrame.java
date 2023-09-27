@@ -32,8 +32,8 @@ public class MainFrame extends JFrame {
     private JFileChooser inputDirectoryChooser;
     private JFileChooser outputDirectoryChooser;
     private ButtonGroup buttonGroup;
-    private ExecutorService executorService;
-    private MediaService mediaService;
+    private final ExecutorService executorService;
+    private final MediaService mediaService;
     private Future<?> organiser;
 
     public MainFrame() {
@@ -58,10 +58,10 @@ public class MainFrame extends JFrame {
         inputDirectoryChooser = new JFileChooser();
         inputDirectoryChooser.setFileSelectionMode(DIRECTORIES_ONLY);
 
-        JButton inputFileButton = new JButton("Input Directory");
-        jPanel.add(inputFileButton);
+        JButton inputDirectoryButton = new JButton("Input Directory");
+        jPanel.add(inputDirectoryButton);
 
-        inputFileButton.addActionListener(event -> {
+        inputDirectoryButton.addActionListener(event -> {
             int returnVal = inputDirectoryChooser.showOpenDialog(MainFrame.this);
 
             if (returnVal == APPROVE_OPTION) {
@@ -152,6 +152,12 @@ public class MainFrame extends JFrame {
             List<String> errors = new ArrayList<>();
             organiser = executorService.submit(() -> {
                 try {
+                    inputDirectoryButton.setEnabled(false);
+                    outputDirectoryButton.setEnabled(false);
+                    yearMonthFormat.setEnabled(false);
+                    numberYearMonthDayFormat.setEnabled(false);
+                    textYearMonthDateFormat.setEnabled(false);
+                    numberTextYearMonthDayFormat.setEnabled(false);
                     organise.setEnabled(false);
                     String format = buttonGroup.getSelection().getActionCommand();
 
@@ -162,13 +168,19 @@ public class MainFrame extends JFrame {
                     showMessageDialog(null, e.getLocalizedMessage());
                 }
 
+                inputDirectoryButton.setEnabled(true);
+                outputDirectoryButton.setEnabled(true);
+                yearMonthFormat.setEnabled(true);
+                numberYearMonthDayFormat.setEnabled(true);
+                textYearMonthDateFormat.setEnabled(true);
+                numberTextYearMonthDayFormat.setEnabled(true);
                 organise.setEnabled(true);
                 if (errors.isEmpty()) {
                     showMessageDialog(null, "Organised");
                 } else {
-                    String errorString = "";
+                    StringBuilder errorString = new StringBuilder();
                     for (String error : errors) {
-                        errorString += "\n" + error;
+                        errorString.append("\n").append(error);
                     }
                     showMessageDialog(null, "Organised with the following errors:" + errorString);
                 }
@@ -184,7 +196,7 @@ public class MainFrame extends JFrame {
                 }
                 String text = Progress.getNumberOfFilesProcessed() + "/" + Progress.getTotalNumberOfFiles();
                 if (Progress.getTotalNumberOfFiles() > 0) {
-                    double decimalTotal = Progress.getNumberOfFilesProcessed() / Progress.getTotalNumberOfFiles();
+                    double decimalTotal = (double) Progress.getNumberOfFilesProcessed() / Progress.getTotalNumberOfFiles();
                     text += " (" + (decimalFormat.format(decimalTotal * 100)) + "%)";
                 } else {
                     text += " (0%)";

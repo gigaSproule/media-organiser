@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.benjaminsproule.mediaorganiser.test.FileResource.getFile;
 import static java.io.File.separator;
@@ -26,27 +27,27 @@ public class MediaDaoITest {
     private String destinationDirectory;
 
     @BeforeEach
-    public void setup() throws URISyntaxException, IOException {
+    public void setup() {
         mediaDao = new MediaDao();
     }
 
     @Test
-    public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsNull() throws IOException {
+    public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsNull() {
         assertThrows(IllegalArgumentException.class, () -> mediaDao.getFiles(null));
     }
 
     @Test
-    public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsEmpty() throws IOException {
+    public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsEmpty() {
         assertThrows(IllegalArgumentException.class, () -> mediaDao.getFiles(""));
     }
 
     @Test
-    public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsBlank() throws IOException {
+    public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsBlank() {
         assertThrows(IllegalArgumentException.class, () -> mediaDao.getFiles(" "));
     }
 
     @Test
-    public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryDoesNotExist() throws IOException {
+    public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryDoesNotExist() {
         assertThrows(IllegalArgumentException.class, () -> mediaDao.getFiles("doesNotExist"));
     }
 
@@ -193,7 +194,7 @@ public class MediaDaoITest {
         Path directory = createTempDirectory(tempPath, "test");
         Path path = createTempFile(directory, "test", ".jpg");
 
-        List<Path> paths = mediaDao.getFiles(directory.toString());
+        List<Path> paths = mediaDao.getFiles(tempPath.toString());
         assertThat(paths.size(), is(1));
         assertThat(paths.get(0), is(path));
     }
@@ -220,7 +221,7 @@ public class MediaDaoITest {
     }
 
     @Test
-    public void testSaveFileThrowsIllegalArgumentExceptionIfFileIsNull() throws IOException {
+    public void testSaveFileThrowsIllegalArgumentExceptionIfFileIsNull() {
         assertThrows(IllegalArgumentException.class,
             () -> mediaDao.saveFile(createTempDirectory("test").toString(), null));
     }
@@ -237,7 +238,7 @@ public class MediaDaoITest {
         createImageInTempDirectory();
         mediaDao.saveFile(destinationDirectory, sourceImagePath);
         assertThat(exists(destinationPath), is(true));
-        checkFilesExist(new File(destinationDirectory + separator + "image.jpg").toPath());
+        checkOnlyFilesExist(new File(destinationDirectory + separator + "image.jpg").toPath());
     }
 
     @Test
@@ -263,25 +264,91 @@ public class MediaDaoITest {
     }
 
     @Test
-    public void testSaveFileRenamesFileIfFileInOutputAlreadyHasThatName() throws IOException, URISyntaxException {
+    public void testSaveFileDoesNothingIfExistingFileInNewLocationHasSameNameAndSize() throws IOException, URISyntaxException {
         createImageInTempDirectory();
         Path preCreatedFile = addFileToDestination("image.jpg");
 
         mediaDao.saveFile(destinationDirectory, sourceImagePath);
 
-        checkFilesExist(preCreatedFile, new File(destinationDirectory + separator + "image0.jpg").toPath());
+        checkOnlyFilesExist(preCreatedFile);
     }
 
     @Test
     public void testSaveFileIncrementsRenamedFileIndexIfFileInOutputAlreadyHasThatName() throws IOException, URISyntaxException {
         createImageInTempDirectory();
-        Path preCreatedFile = addFileToDestination("image.jpg");
+        Path preCreatedFile = addFileToDestination("1970-01-01_01-01-01.jpg", "image.jpg");
         Path preCreatedFileIncremented = addFileToDestination("image0.jpg");
 
         mediaDao.saveFile(destinationDirectory, sourceImagePath);
 
-        checkFilesExist(preCreatedFile, preCreatedFileIncremented,
+        checkOnlyFilesExist(preCreatedFile, preCreatedFileIncremented,
             new File(destinationDirectory + separator + "image1.jpg").toPath());
+    }
+
+    @Test
+    public void testDeleteEmptyDirectoryDoesNothingIfPathParentNotEmpty() throws IOException, URISyntaxException {
+        createImageInTempDirectory();
+
+        mediaDao.deleteEmptyDirectory(sourceImagePath);
+
+        assertThat(exists(sourceImagePath.getParent()), is(true));
+        assertThat(exists(sourceImagePath), is(true));
+    }
+
+    @Test
+    public void testDeleteEmptyDirectoryDeletesPathIfPathParentEmpty() throws IOException {
+        sourceImagePath = new File(
+            Files.createTempDirectory(Constants.SOURCE_PATH).toString() + separator + "image.jpg").toPath();
+
+        mediaDao.deleteEmptyDirectory(sourceImagePath);
+
+        assertThat(exists(sourceImagePath.getParent()), is(false));
+    }
+
+    @Test
+    public void testDeleteEmptyDirectoryDeletesPathIfPathParentOnlyContainsThumbsDb() throws IOException {
+        Path tempDirectory = createTempDirectory(Constants.SOURCE_PATH);
+        sourceImagePath = new File(tempDirectory.toString() + separator + "image.jpg").toPath();
+        File thumbsDb = new File(tempDirectory.resolve("Thumbs.db").toString());
+        Files.createFile(thumbsDb.toPath());
+        assertThat(exists(thumbsDb.toPath()), is(true));
+
+        mediaDao.deleteEmptyDirectory(sourceImagePath);
+
+        assertThat(exists(tempDirectory), is(false));
+        assertThat(exists(thumbsDb.toPath()), is(false));
+    }
+
+    @Test
+    public void testDeleteEmptyDirectoryDeletesPathIfPathParentOnlyContainsDsStore() throws IOException {
+        Path tempDirectory = createTempDirectory(Constants.SOURCE_PATH);
+        sourceImagePath = new File(tempDirectory.toString() + separator + "image.jpg").toPath();
+        File dsStore = new File(tempDirectory.resolve(".DS_Store").toString());
+        Files.createFile(dsStore.toPath());
+        assertThat(exists(dsStore.toPath()), is(true));
+
+        mediaDao.deleteEmptyDirectory(sourceImagePath);
+
+        assertThat(exists(tempDirectory), is(false));
+        assertThat(exists(dsStore.toPath()), is(false));
+    }
+
+    @Test
+    public void testDeleteEmptyDirectoryDeletesPathIfPathParentOnlyContainsThumbsDbAndDsStore() throws IOException {
+        Path tempDirectory = createTempDirectory(Constants.SOURCE_PATH);
+        sourceImagePath = new File(tempDirectory.toString() + separator + "image.jpg").toPath();
+        File thumbsDb = new File(tempDirectory.resolve("Thumbs.db").toString());
+        File dsStore = new File(tempDirectory.resolve(".DS_Store").toString());
+        Files.createFile(thumbsDb.toPath());
+        Files.createFile(dsStore.toPath());
+        assertThat(exists(thumbsDb.toPath()), is(true));
+        assertThat(exists(dsStore.toPath()), is(true));
+
+        mediaDao.deleteEmptyDirectory(sourceImagePath);
+
+        assertThat(exists(tempDirectory), is(false));
+        assertThat(exists(thumbsDb.toPath()), is(false));
+        assertThat(exists(dsStore.toPath()), is(false));
     }
 
     private Path addFileToDestination(String fileName) throws IOException {
@@ -290,8 +357,16 @@ public class MediaDaoITest {
         return preCreatedFile;
     }
 
-    private void checkFilesExist(Path... files) throws IOException {
-        assertThat(Files.list(destinationPath).toArray().length, is(files.length));
+    private Path addFileToDestination(String oldFileName, String newFileName) throws IOException, URISyntaxException {
+        Path preCreatedFile = new File(destinationDirectory + separator + newFileName).toPath();
+        copy(getFile(oldFileName).toPath(), preCreatedFile);
+        return preCreatedFile;
+    }
+
+    private void checkOnlyFilesExist(Path... files) throws IOException {
+        try (Stream<Path> list = list(destinationPath)) {
+            assertThat(list.toArray().length, is(files.length));
+        }
         for (Path file : files) {
             assertThat(exists(file), is(true));
         }

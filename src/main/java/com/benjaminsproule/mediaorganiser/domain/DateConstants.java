@@ -1,6 +1,6 @@
 package com.benjaminsproule.mediaorganiser.domain;
 
-public class DateConstants {
+public final class DateConstants {
     public static final String YYYY_MM = "YYYY/MM";
     public static final String YYYY_MM_DD = "YYYY/MM/dd";
     public static final String YYYY_MMMM_DD = "YYYY/MMMM/dd";

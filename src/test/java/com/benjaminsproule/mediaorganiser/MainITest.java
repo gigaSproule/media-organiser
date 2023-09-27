@@ -176,6 +176,10 @@ public class MainITest {
         assertThat(Progress.getNumberOfFilesProcessed(), is(1));
         assertThat(Progress.getTotalNumberOfFiles(), is(1));
 
+        // Service deletes input directory when it's empty, so need to re-create it
+        inputDirectory = Files.createTempDirectory(Constants.SOURCE_PATH).toString();
+        args = new String[]{"-id", inputDirectory, "-od", outputDirectory, "-of", DateConstants.YYYY_MM_DD};
+
         Main.main(args);
 
         assertThat("Counter either not reset or image still in input directory", Progress.getNumberOfFilesProcessed(),
