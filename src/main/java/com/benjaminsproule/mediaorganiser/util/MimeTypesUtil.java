@@ -17,13 +17,14 @@ public class MimeTypesUtil {
     public static final String IMAGE_HEIC = "image/heic";
     public static final String IMAGE_HEIF = "image/heif";
     public static final String VIDEO_MP4 = "video/mp4";
-    public static final String VIDEO_AVI = "video/x-msvideo";
+    public static final String VIDEO_AVI_MS = "video/x-msvideo";
+    public static final String VIDEO_AVI_UNIX = "video/vnd.avi";
     public static final String VIDEO_QUICKTIME = "video/quicktime";
     public static final String IMAGES_JPG_MAPPING = IMAGE_JPG + "\tjpg jpeg";
 
     public static final String IMAGES_TIFF = IMAGE_TIFF + "\ttif tiff";
     public static final String VIDEOS_MP4 = VIDEO_MP4 + "\tmp4";
-    public static final String VIDEOS_AVI = VIDEO_AVI + "\tavi";
+    public static final String VIDEOS_AVI = VIDEO_AVI_UNIX + "\tavi";
 
     private static final Set<String> MIME_TYPES = new HashSet<String>();
 
