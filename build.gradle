@@ -33,7 +33,7 @@ description = """"""
 mainClassName = "com.benjaminsproule.mediaorganiser.Main"
 
 dependencies {
-    implementation 'commons-cli:commons-cli:1.5.0'
+    implementation 'commons-cli:commons-cli:1.6.0'
     implementation 'org.apache.commons:commons-lang3:3.13.0'
     implementation 'com.drewnoakes:metadata-extractor:2.18.0'
     implementation 'org.overviewproject:mime-types:2.0.0'
