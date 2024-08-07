@@ -34,7 +34,7 @@ mainClassName = "com.benjaminsproule.mediaorganiser.Main"
 
 dependencies {
     implementation 'commons-cli:commons-cli:1.8.0'
-    implementation 'org.apache.commons:commons-lang3:3.15.0'
+    implementation 'org.apache.commons:commons-lang3:3.16.0'
     implementation 'com.drewnoakes:metadata-extractor:2.19.0'
     implementation 'org.overviewproject:mime-types:2.0.0'
     implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
