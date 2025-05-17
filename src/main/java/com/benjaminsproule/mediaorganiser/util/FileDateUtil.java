@@ -7,6 +7,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.mov.QuickTimeDirectory;
 import com.drew.metadata.mov.metadata.QuickTimeMetadataDirectory;
+import com.drew.metadata.mp4.Mp4Directory;
 import com.drew.metadata.mp4.media.Mp4MetaDirectory;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,6 +46,13 @@ public class FileDateUtil {
             Mp4MetaDirectory mp4MetaDirectory = metadata.getFirstDirectoryOfType(Mp4MetaDirectory.class);
             if (mp4MetaDirectory != null) {
                 dateTime = mp4MetaDirectory.getDate(Mp4MetaDirectory.TAG_CREATION_TIME);
+            }
+            if (dateTime != null) {
+                return ZonedDateTime.ofInstant(dateTime.toInstant(), ZoneId.of("UTC"));
+            }
+            Mp4Directory mp4Directory = metadata.getFirstDirectoryOfType(Mp4Directory.class);
+            if (mp4Directory != null) {
+                dateTime = mp4Directory.getDate(Mp4Directory.TAG_CREATION_TIME);
             }
             if (dateTime != null) {
                 return ZonedDateTime.ofInstant(dateTime.toInstant(), ZoneId.of("UTC"));
@@ -101,6 +109,10 @@ public class FileDateUtil {
 
         if (zonedDateTime == null) {
             zonedDateTime = getDateByBurstCollageFileName(fileName);
+        }
+
+        if (zonedDateTime == null) {
+            zonedDateTime = getDateByIMGDateWhatsApp(fileName);
         }
 
         if (zonedDateTime == null) {
@@ -194,8 +206,8 @@ public class FileDateUtil {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
             return ZonedDateTime.parse(fileName
-                    .replaceFirst("(?i)(\\d{5})(IMG|XTR)_(\\d{5})_BURST", "")
-                    .replaceFirst("(?i)_COVER", "") + "+0000", dateTimeFormatter);
+                .replaceFirst("(?i)(\\d{5})(IMG|XTR)_(\\d{5})_BURST", "")
+                .replaceFirst("(?i)_COVER", "") + "+0000", dateTimeFormatter);
         } catch (DateTimeParseException e) {
             log.info(e.getLocalizedMessage(), e);
             return null;
@@ -206,7 +218,7 @@ public class FileDateUtil {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
             return ZonedDateTime.parse(fileName
-                    .replaceFirst("(?i)Burst_Cover_GIF_Action_", "") + "+0000", dateTimeFormatter);
+                .replaceFirst("(?i)Burst_Cover_GIF_Action_", "") + "+0000", dateTimeFormatter);
         } catch (DateTimeParseException e) {
             log.info(e.getLocalizedMessage(), e);
             return null;
@@ -217,7 +229,17 @@ public class FileDateUtil {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
             return ZonedDateTime.parse(fileName
-                    .replaceFirst("(?i)Burst_Cover_Collage_", "") + "+0000", dateTimeFormatter);
+                .replaceFirst("(?i)Burst_Cover_Collage_", "") + "+0000", dateTimeFormatter);
+        } catch (DateTimeParseException e) {
+            log.info(e.getLocalizedMessage(), e);
+            return null;
+        }
+    }
+
+    private static ZonedDateTime getDateByIMGDateWhatsApp(String fileName) {
+        try {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
+            return ZonedDateTime.parse(fileName.replaceFirst("IMG-", "").replaceFirst("-WA(\\d+)", "") + "000000+0000", dateTimeFormatter);
         } catch (DateTimeParseException e) {
             log.info(e.getLocalizedMessage(), e);
             return null;

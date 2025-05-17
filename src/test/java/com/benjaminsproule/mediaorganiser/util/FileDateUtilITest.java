@@ -100,6 +100,20 @@ public class FileDateUtilITest {
         assertThat(zonedDateTime.getNano(), is(0));
     }
 
+    @Test
+    public void testGetDateFromFile_UsesVideoMetadata_mp4_editedOnAndroid() throws Exception {
+        File file = getFile("video-edited-on-android.mp4");
+        ZonedDateTime zonedDateTime = FileDateUtil.getDateFromFile(file);
+
+        assertThat(zonedDateTime.getYear(), is(2025));
+        assertThat(zonedDateTime.getMonthValue(), is(5));
+        assertThat(zonedDateTime.getDayOfMonth(), is(17));
+        assertThat(zonedDateTime.getHour(), is(21));
+        assertThat(zonedDateTime.getMinute(), is(52));
+        assertThat(zonedDateTime.getSecond(), is(59));
+        assertThat(zonedDateTime.getNano(), is(0));
+    }
+
     @Disabled("Find an avi file with a created timestamp")
     public void testGetDateFromFile_UsesVideoMetadata_avi() throws Exception {
         File file = getFile("video.avi");
@@ -134,7 +148,8 @@ public class FileDateUtilITest {
         "00001XTR_00001_BURST20170430172516.jpg,2017-04-30T17:25:16Z",
         "00001XTR_00001_BURST20170430172516_COVER.jpg,2017-04-30T17:25:16Z",
         "Burst_Cover_GIF_Action_20170401114720.gif,2017-04-01T11:47:20Z",
-        "Burst_Cover_Collage_20170430172710.jpg,2017-04-30T17:27:10Z"
+        "Burst_Cover_Collage_20170430172710.jpg,2017-04-30T17:27:10Z",
+        "IMG-20170430-WA0000.jpg,2017-04-30T00:00:00Z"
     })
     public void testGetDateFromFile_UsesTheFileNameIfNoImageMetadata(String filename, String expectedDateTime) throws Exception {
         File file = getFile(filename);
