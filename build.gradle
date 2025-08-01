@@ -22,15 +22,20 @@ eclipse {
     }
 }
 
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 group = 'com.benjaminsproule'
 version = '1.0-SNAPSHOT'
 
 description = """"""
 
-mainClassName = "com.benjaminsproule.mediaorganiser.Main"
+application {
+    mainClass = "com.benjaminsproule.mediaorganiser.Main"
+}
 
 dependencies {
     implementation 'commons-cli:commons-cli:1.9.0'
