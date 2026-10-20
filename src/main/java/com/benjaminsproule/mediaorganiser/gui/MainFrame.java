@@ -5,6 +5,7 @@ import com.benjaminsproule.mediaorganiser.domain.DateConstants;
 import com.benjaminsproule.mediaorganiser.domain.Progress;
 import com.benjaminsproule.mediaorganiser.service.MediaService;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,7 +25,6 @@ import static javax.swing.JOptionPane.showMessageDialog;
 
 @Slf4j
 public class MainFrame extends JFrame {
-    private static final long serialVersionUID = 1L;
     private static final DecimalFormat decimalFormat = new DecimalFormat("#.00");
 
     private JLabel inputDirectoryPathLabel;
@@ -34,7 +34,7 @@ public class MainFrame extends JFrame {
     private ButtonGroup buttonGroup;
     private final ExecutorService executorService;
     private final MediaService mediaService;
-    private Future<?> organiser;
+    private @Nullable  Future<?> organiser;
 
     public MainFrame() {
         super("Media Organiser");
@@ -187,7 +187,7 @@ public class MainFrame extends JFrame {
             });
         });
 
-        executorService.submit(() -> {
+        var ignored = executorService.submit(() -> {
             while (true) {
                 try {
                     Thread.sleep(100L);
@@ -197,7 +197,7 @@ public class MainFrame extends JFrame {
                 String text = Progress.getNumberOfFilesProcessed() + "/" + Progress.getTotalNumberOfFiles();
                 if (Progress.getTotalNumberOfFiles() > 0) {
                     double decimalTotal = (double) Progress.getNumberOfFilesProcessed() / Progress.getTotalNumberOfFiles();
-                    text += " (" + (decimalFormat.format(decimalTotal * 100)) + "%)";
+                    text += " (" + decimalFormat.format(decimalTotal * 100) + "%)";
                 } else {
                     text += " (0%)";
                 }

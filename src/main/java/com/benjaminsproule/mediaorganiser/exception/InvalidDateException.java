@@ -1,10 +1,10 @@
 package com.benjaminsproule.mediaorganiser.exception;
 
+import org.jspecify.annotations.NonNull;
+
 public class InvalidDateException extends Exception {
 
-    private static final long serialVersionUID = -8692313005159937239L;
-
-    public InvalidDateException(String message) {
+    public InvalidDateException(@NonNull String message) {
         super(message);
     }
 }

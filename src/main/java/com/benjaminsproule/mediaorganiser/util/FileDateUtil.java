@@ -6,10 +6,11 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.mov.QuickTimeDirectory;
-import com.drew.metadata.mov.metadata.QuickTimeMetadataDirectory;
 import com.drew.metadata.mp4.Mp4Directory;
 import com.drew.metadata.mp4.media.Mp4MetaDirectory;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class FileDateUtil {
      * @param file the file to extract the date from
      * @return the {@link ZonedDateTime} of the file
      */
-    public static ZonedDateTime getDateFromFile(File file) throws InvalidDateException {
+    public static @NonNull ZonedDateTime getDateFromFile(@NonNull File file) throws InvalidDateException {
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(file);
             Date dateTime = null;
@@ -122,7 +123,7 @@ public class FileDateUtil {
         return zonedDateTime;
     }
 
-    private static ZonedDateTime getDateByEpochMilli(String fileName) {
+    private static @Nullable ZonedDateTime getDateByEpochMilli(@NonNull String fileName) {
         try {
             long epochMilli = Long.parseLong(fileName);
             return ZonedDateTime.ofInstant(ofEpochMilli(epochMilli), ZoneId.of("UTC"));
@@ -132,7 +133,7 @@ public class FileDateUtil {
         }
     }
 
-    private static ZonedDateTime getDateByDateUnderscoreTime(String fileName) {
+    private static @Nullable ZonedDateTime getDateByDateUnderscoreTime(@NonNull String fileName) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssZ");
             return ZonedDateTime.parse(fileName + "+0000", dateTimeFormatter);
@@ -142,7 +143,7 @@ public class FileDateUtil {
         }
     }
 
-    private static ZonedDateTime getDateByImgUnderscoreDateUnderscoreTime(String fileName) {
+    private static @Nullable ZonedDateTime getDateByImgUnderscoreDateUnderscoreTime(@NonNull String fileName) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssZ");
             return ZonedDateTime.parse(fileName.replaceFirst("(?i)IMG_", "") + "+0000", dateTimeFormatter);
@@ -152,7 +153,7 @@ public class FileDateUtil {
         }
     }
 
-    private static ZonedDateTime getDateByDateHyphenatedUnderscoreTimeHyphenated(String fileName) {
+    private static @Nullable ZonedDateTime getDateByDateHyphenatedUnderscoreTimeHyphenated(@NonNull String fileName) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ssZ");
             return ZonedDateTime.parse(fileName + "+0000", dateTimeFormatter);
@@ -162,7 +163,7 @@ public class FileDateUtil {
         }
     }
 
-    private static ZonedDateTime getDateByScreenshotUnderscoreDateHyphenatedTimeHyphenated(String fileName) {
+    private static @Nullable ZonedDateTime getDateByScreenshotUnderscoreDateHyphenatedTimeHyphenated(@NonNull String fileName) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ssZ");
             return ZonedDateTime.parse(fileName.replaceFirst("(?i)Screenshot_", "") + "+0000", dateTimeFormatter);
@@ -172,7 +173,7 @@ public class FileDateUtil {
         }
     }
 
-    private static ZonedDateTime getDateByDateUnderscoreTimeUnderscoreiOS(String fileName) {
+    private static @Nullable ZonedDateTime getDateByDateUnderscoreTimeUnderscoreiOS(@NonNull String fileName) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssSSSZ");
             return ZonedDateTime.parse(fileName.replaceFirst("(?i)_iOS", "") + "+0000", dateTimeFormatter);
@@ -182,7 +183,7 @@ public class FileDateUtil {
         }
     }
 
-    private static ZonedDateTime getDateByPXLUnderscoreDateUnderscoreTime(String fileName) {
+    private static @Nullable ZonedDateTime getDateByPXLUnderscoreDateUnderscoreTime(@NonNull String fileName) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssSSSZ");
             return ZonedDateTime.parse(fileName.replaceFirst("(?i)PXL_", "") + "+0000", dateTimeFormatter);
@@ -192,7 +193,7 @@ public class FileDateUtil {
         }
     }
 
-    private static ZonedDateTime getDateByDateUnderscoreTimeHyphenCOLLAGE(String fileName) {
+    private static @Nullable ZonedDateTime getDateByDateUnderscoreTimeHyphenCOLLAGE(@NonNull String fileName) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssSSSZ");
             return ZonedDateTime.parse(fileName.replaceFirst("(?i)-COLLAGE", "") + "+0000", dateTimeFormatter);
@@ -202,7 +203,7 @@ public class FileDateUtil {
         }
     }
 
-    private static ZonedDateTime getDateByIndexedBurstFileName(String fileName) {
+    private static @Nullable ZonedDateTime getDateByIndexedBurstFileName(@NonNull String fileName) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
             return ZonedDateTime.parse(fileName
@@ -214,7 +215,7 @@ public class FileDateUtil {
         }
     }
 
-    private static ZonedDateTime getDateByBurstActionFileName(String fileName) {
+    private static @Nullable ZonedDateTime getDateByBurstActionFileName(@NonNull String fileName) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
             return ZonedDateTime.parse(fileName
@@ -225,7 +226,7 @@ public class FileDateUtil {
         }
     }
 
-    private static ZonedDateTime getDateByBurstCollageFileName(String fileName) {
+    private static @Nullable ZonedDateTime getDateByBurstCollageFileName(@NonNull String fileName) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
             return ZonedDateTime.parse(fileName
@@ -236,7 +237,7 @@ public class FileDateUtil {
         }
     }
 
-    private static ZonedDateTime getDateByIMGDateWhatsApp(String fileName) {
+    private static @Nullable ZonedDateTime getDateByIMGDateWhatsApp(@NonNull String fileName) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ");
             return ZonedDateTime.parse(fileName.replaceFirst("IMG-", "").replaceFirst("-WA(\\d+)", "") + "000000+0000", dateTimeFormatter);

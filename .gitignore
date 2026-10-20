@@ -9,9 +9,6 @@ atlassian-ide-plugin.xml
 **/test.csv
 **/test.json
 **/test.xml
-build
-.gradle
-.gradletasknamecache
 /.apt_generated/
 /bin/
 local.properties

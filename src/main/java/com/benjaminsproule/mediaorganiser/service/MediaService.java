@@ -4,6 +4,7 @@ import com.benjaminsproule.mediaorganiser.dao.MediaDao;
 import com.benjaminsproule.mediaorganiser.domain.Progress;
 import com.benjaminsproule.mediaorganiser.exception.InvalidDateException;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -35,10 +36,11 @@ public class MediaService {
      * @param outputDirectory the directory to move the files into
      * @param outputFormat    the format of the folder names
      * @return a list of errors
-     * @throws IOException          if there is an issue with the file being read
+     * @throws IOException if there is an issue with the file being read
      */
-    public List<String> organise(String inputDirectory, String outputDirectory, String outputFormat)
-        throws IOException {
+    public @NonNull List<@NonNull String> organise(
+        @NonNull String inputDirectory, @NonNull String outputDirectory, @NonNull String outputFormat
+    ) throws IOException {
         Progress.reset();
         List<Path> paths = mediaDao.getFiles(inputDirectory);
         Progress.setTotalNumberOfFiles(paths.size());
@@ -46,7 +48,7 @@ public class MediaService {
 
         try (ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())) {
             for (Path path : paths) {
-                executorService.submit(() -> {
+                var ignored = executorService.submit(() -> {
                     try {
                         ZonedDateTime zonedDateTime = getDateFromFile(path.toFile());
                         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outputFormat);

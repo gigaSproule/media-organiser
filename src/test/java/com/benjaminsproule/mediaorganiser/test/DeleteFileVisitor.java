@@ -11,6 +11,7 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 
 public class DeleteFileVisitor extends SimpleFileVisitor<Path> {
 
+    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
         try {
@@ -23,6 +24,7 @@ public class DeleteFileVisitor extends SimpleFileVisitor<Path> {
         return CONTINUE;
     }
 
+    @SuppressWarnings("CatchAndPrintStackTrace")
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
         try {

@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class MimeTypesUtil {
@@ -26,7 +27,7 @@ public class MimeTypesUtil {
     public static final String VIDEOS_MP4 = VIDEO_MP4 + "\tmp4";
     public static final String VIDEOS_AVI = VIDEO_AVI_UNIX + "\tavi";
 
-    private static final Set<String> MIME_TYPES = new HashSet<String>();
+    private static final Set<String> MIME_TYPES = new HashSet<>();
 
     static {
         MIME_TYPES.add(IMAGES_JPG_MAPPING);
@@ -39,7 +40,7 @@ public class MimeTypesUtil {
      * Creates a mime types file in the home directory if it doesn't already
      * exist, containing the required mime types for this application
      *
-     * @throws IOException
+     * @throws IOException if the file is unable to be created or written to
      */
     public static void createMimeTypesFile() throws IOException {
         Path mimeTypes = new File(System.getProperty("user.home") + "/.mime.types").toPath();
@@ -59,7 +60,7 @@ public class MimeTypesUtil {
      * @return true if the system is Mac OS X or Linux, false if it's not
      */
     public static boolean requiresMimeTypesFile() {
-        String osName = System.getProperty("os.name").toLowerCase();
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
         return osName.contains("mac") || osName.contains("linux");
 
     }

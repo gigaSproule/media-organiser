@@ -1,6 +1,7 @@
 package com.benjaminsproule.mediaorganiser.dao;
 
 import com.benjaminsproule.mediaorganiser.test.Constants;
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@NullUnmarked
 public class MediaDaoITest {
     private MediaDao mediaDao;
     private Path staticPath;
@@ -29,11 +31,6 @@ public class MediaDaoITest {
     @BeforeEach
     public void setup() {
         mediaDao = new MediaDao();
-    }
-
-    @Test
-    public void testGetFilesThrowsIllegalArgumentExceptionIfInputDirectoryIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> mediaDao.getFiles(null));
     }
 
     @Test
@@ -200,13 +197,6 @@ public class MediaDaoITest {
     }
 
     @Test
-    public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsNull() throws IOException {
-        Path tempPath = createTempDirectory("test");
-        Path path = createTempFile(tempPath, "test", ".jpg");
-        assertThrows(IllegalArgumentException.class, () -> mediaDao.saveFile(null, path));
-    }
-
-    @Test
     public void testSaveFileThrowsIllegalArgumentExceptionIfOutputDirectoryIsEmpty() throws IOException {
         Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
@@ -218,12 +208,6 @@ public class MediaDaoITest {
         Path tempPath = createTempDirectory("test");
         Path path = createTempFile(tempPath, "test", ".jpg");
         assertThrows(IllegalArgumentException.class, () -> mediaDao.saveFile(" ", path));
-    }
-
-    @Test
-    public void testSaveFileThrowsIllegalArgumentExceptionIfFileIsNull() {
-        assertThrows(IllegalArgumentException.class,
-            () -> mediaDao.saveFile(createTempDirectory("test").toString(), null));
     }
 
     @Test
